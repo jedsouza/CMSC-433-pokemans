@@ -1,0 +1,32 @@
+#borderDemo {
+    border: 5px solid #000000;
+    border-radius: 20px 20px 20px 20px;
+    vertical-align: top;
+    margin: 1vw;
+    }
+
+.front1 {
+    width: 150px;
+    height: 150px;
+    display: inline-block;
+}
+
+.desc {
+    width: 120px;
+    height: 50px;
+    display: inline-block; 
+    vertical-align: top;
+    text-align: center;
+    bottom: 100px;
+}
+
+.title {
+    font-size: 1.3em;
+    font-weight: bolder;
+    margin-top: 2vw;
+    text-decoration: underline;
+}
+
+.checkbox {
+    border-top: 4vw;
+}
