@@ -1,5 +1,6 @@
 var fr_num = 0;				//keeps track of frame number of animation the sprite is in
 var tID_animate;			//ID used for clearing the animation loop
+var tID_layer;
 var moving = false;		//lock to ensure proper looping of movement
 var img_element;			//used for modifying the image in the div
 var div_element;			//used for modifying the div itself
@@ -7,7 +8,7 @@ var bg_element;				//used for modifying the background image
 var keyPressed = -1;		//keeps track of the active key
 var direction;				//0 = left, 1 = up, 2 = right, 3 = down
 const MOVE_LIMIT = 31;		//Amount to move per input
-
+var index=0;
 
 var pos = [89,62];			//position array for the character
 const MAX_POS = [537,510];	//max value for positions
@@ -17,26 +18,49 @@ const Y = 1;				//pos[Y] is the y coordinate
 							
 var test_element;
 var animating = false;
-/*
+
 //Experimental for now, used to add things to the field
 //functions for moving them around not implemented yet
 var field_elements = [];
 
-function Field_element(width, height, src){
-	this.newDiv = document.createElement("img")
-	this.newDiv.style = "position:absolute;";
-	this.newDiv.style.width = width;
-	this.newDiv.style.height = height;
-	this.newDiv.src = src;
+//adjusts layers of all objects on the field to account for being in front of something
+function layering() {
+	//get all objects
+	let items = document.getElementsByClassName("object");
+
+	for(let j = 0; j < items.length; j++)
+	{
+		//layer is equal to y coordinate
+		items[j].style.zIndex = `${items[j].style.top}`;
+	}
+}
+
+//creates an object with the given characteristics, used for adding things
+//onto the field in the game
+function Field_element(type, group, width, height, src, x, y){
+	var newElem = document.createElement(`${type}`);
+	newElem.style = "position:absolute;";
+	newElem.style.width = width;
+	newElem.style.height = height;
+	newElem.style.top = y;
+	newElem.style.left = x;
+	newElem.src = src;
+	newElem.classList.add(`${group}`);
+	newElem.id = `field${index}`;
+	newElem.style.zIndex=`${y}`;
+	index++;
+	document.getElementById('body').appendChild(newElem);
 }
 	
-function add_Element(width, height, src) {
-	var newElement = new Field_element(width, height, src);
+//adds an item to the field
+function add_element(type, group, width, height, src, x, y) {
+	var newElement = new Field_element(type, group, width, height, src, x, y);
 	field_elements.push(newElement);
 }
 
+//will be used to detect collision so you can't walk on top of charmander
 function against_element(coord, mod) {}
-*/
+
 
 				
 //direction and fr_num are used to get x coordinate for slicing sprites
@@ -72,7 +96,7 @@ function start_move() {
 	//if it would, move the bacground instead
 	let test_value = pos[coordinate] + modifier;
 	if(test_value < MIN_POS[coordinate] || test_value > MAX_POS[coordinate]){
-		setTimeout(do_move_background.bind(null, coordinate, modifier*-1, 1, 0),3)
+		do_move_background(coordinate, modifier*-1, 1, 0);
 	} 
 	else {
 		//do the move for the character
@@ -83,16 +107,31 @@ function start_move() {
 //moves the background instead of the character
 function do_move_background(coord, mod, count, offset) {
 	
+
 	//find new offset, 1 in the opposite direction of the characters direction
 	//mod makes it appear to loop around infinitely
 	offset+=mod
 	offset = offset%MOVE_LIMIT;
 	
 	//update the position
-	if(coord == Y)
-		bg_img_element.style.backgroundPosition = `0px ${offset}px`; 
-	else //(if coord == X)
+	if(coord == Y) {
+		bg_img_element.style.backgroundPosition = `0px ${offset}px`;
+
+		//move all field objects along with the background
+		for(let i = 0; i < index; i++){
+			let element = document.getElementById(`field${i}`);
+			let y = parseInt(element.style.top) + mod;
+			element.style.top = `${y}`;
+		}
+	}
+	else { //(if coord == X)
 		bg_img_element.style.backgroundPosition = `${offset}px 0px`; 
+		for(let i = 0; i < index; i++){
+			let element = document.getElementById(`field${i}`);
+			let x = parseInt(element.style.left) + mod;
+			element.style.left = `${x}`;
+		}
+	}	
 	
 	//keep moving it until the limit is reached to ensure alignment
 	if(count < MOVE_LIMIT) {
@@ -103,9 +142,10 @@ function do_move_background(coord, mod, count, offset) {
 		if(keyPressed == -1) {
 			clearInterval(tID_animate);		
 			animating = false;
+			
+			//reset frame to 0, draw the frame so character stops on his feet
 			fr_num = 0;
 			animate();
-			fr_num = 0;
 		}
 		moving = false;
 	}
@@ -120,6 +160,9 @@ function do_move(coord, mod, steps) {
 	//update actual position of the image
 	div_element.style.left = pos[X] + 'px';
 	div_element.style.top = pos[Y] + 'px';
+	div_element.style.zIndex = `${pos[Y]}`
+	
+	layering();
 	if(steps < MOVE_LIMIT) {
 		setTimeout(do_move.bind(null, coord, mod, steps+1),3);
 	}
@@ -129,7 +172,6 @@ function do_move(coord, mod, steps) {
 			animating = false;
 			fr_num = 0;
 			animate();
-			fr_num = 0;
 		}
 		moving = false;
 	}
@@ -169,7 +211,6 @@ function handle_input(evt) {
 	}
 	
 	if (moving == false) {
-		
 			moving = true;
 			start_move();
 	}
@@ -186,6 +227,48 @@ function end_input(evt) {
 	}
 };
 
+
+//make white rectangles to cover objects outside of the frame
+function make_guards() {
+	var topGuard = document.createElement("div");
+	topGuard.style = "position:fixed;";
+	topGuard.style.width = 687;
+	topGuard.style.height = 16;
+	topGuard.style.top = 0;
+	topGuard.style.left = 0;
+	topGuard.style.backgroundColor = "white"
+	topGuard.id = "topGuard";
+	topGuard.style.zIndex="9000";
+	document.getElementById('body').appendChild(topGuard);
+	var rightGuard = document.createElement("div");
+	rightGuard.style = "position:fixed;";
+	rightGuard.style.width = window.innerWidth - 687;
+	rightGuard.style.height = window.innerHeight;
+	rightGuard.style.top = 0;
+	rightGuard.style.left = 687;
+	rightGuard.style.backgroundColor = "white"
+	rightGuard.id = "rightGuard";
+	rightGuard.style.zIndex="9000";
+	document.getElementById('body').appendChild(rightGuard);
+	var leftGuard = document.createElement("div");
+	leftGuard.style = "position:fixed;";
+	leftGuard.style.width = 687;
+	leftGuard.style.height = window.innerHeight - 657;
+	leftGuard.style.top = 672;
+	leftGuard.style.left = 0;
+	leftGuard.style.backgroundColor = "white"
+	leftGuard.id = "leftGuard";
+	leftGuard.style.zIndex="9000";
+	document.getElementById('body').appendChild(leftGuard);
+}
+
+//resize the white rectangles, called when window is resized
+function resize() {
+	rightGuard.style.width = window.innerWidth - 687;
+	rightGuard.style.height = window.innerHeight;
+	leftGuard.style.height = window.innerHeight - 657;
+}
+
 //runs on load
 function startUp()
 {
@@ -194,8 +277,13 @@ function startUp()
 	img_element = document.getElementById("sprite");
 	div_element = document.getElementById("sprite_holder");
 	bg_img_element = document.getElementById("grass");
-	
+	make_guards();
 	//add listeners for required events
 	window.addEventListener('keydown', handle_input);
-	window.addEventListener('keyup', end_input);	
+	window.addEventListener('keyup', end_input);
+	window.addEventListener('resize', resize);
+	
+	//adds some charmanders to the field for testing purposes
+	add_element("img", "object", 57, 60, "004Charmander.png", 185, 150);
+	add_element("img", "object", 57, 60, "004Charmander.png", 217, 119);
 }
