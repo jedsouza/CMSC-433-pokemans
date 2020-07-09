@@ -7,46 +7,72 @@
 	</head>
 	<!-- call startup function -->
 	<body id="body" onload="startBattle()" bgcolor='white'>
-		<!-- create a div to hold the sprite -->
-		<img class="battle" src="battle.png" width="545" height="381"
-			style="position:absolute; top:82px; left:63px;">
-		
-		<img class="battle" src="menu_frame.png" width="545" height="129"
-			style="position:absolute; top:463px; left:63px;z-index:9">
-		
-		<img class="battle" id="OPP_POKE" src="poke_front/tile150.png" width="96"
-			 height="96" style="position:absolute; top:130px; left:415px;">
-		
-		<img class="battle" id="PLYR_POKE" src="poke_back/tile149.png" width="96"
-			 height="96" style="position:absolute; top:382px; left:150px; z-index:1">
-			 
+				
+		<!-- holds the frame -->
 		<div id="fr_holder" style="position:absolute;left:0px; top:0px;z-index:1000">
 			<!-- set up the game frame -->
 			<p id = "frame" 
-			style="height:656px;
-					width:687px;
-					background:url('frame_small.png') 0px 0px;">  
-			</p>
+			style="height:656px;width:687px; background:url('frame_small.png') 0px 0px;">  </p>
 		</div>
 		
+		<!-- holds the battle scene -->
+		<img class="battle" src="battle.png" width="545" height="381"
+			style="position:absolute; top:82px; left:63px;">
+		<!-- holds the bottom section -->
+		<img class="battle" src="menu_frame.png" width="545" height="129"
+			style="position:absolute; top:463px; left:63px;z-index:9">
+		<!-- holds the image for opponent pokemon -->
+		<img class="battle" id="OPP_POKE" src="poke_front/tile150.png" width="96"
+			 height="96" style="position:absolute; top:130px; left:415px;">
+		<!-- for listing opponent info -->
+		<p id="opp_name" style="position:absolute;top:120px;left:110px">Pokemon Name</p>
+		<p               style="position:absolute;top:120px;left:220px">Lvl:</p>
+		<p id="opp_lvl"  style="position:absolute;top:120px;left:250px">100</p>
+		
+		
+		<!-- holds the image for player pokemon -->
+		<img class="battle" id="PLYR_POKE" src="poke_back/tile149.png" width="96"
+			 height="96" style="position:absolute; top:382px; left:150px; z-index:1">
+		<!-- for listing opponent info -->
+		<p id="plyr_name" style="position:absolute;top:359px;left:346px">Pokemon Name</p>
+		<p                style="position:absolute;top:359px;left:456px">Lvl:</p>
+		<p id="plyr_lvl"  style="position:absolute;top:359px;left:486px">100</p>
+
+		
+		<!-- white bar to cover opponent hp bar as needed -->
 		<div class="battle" style="width:0px;height:4px;border:2px;border-color:white;
 			        position:absolute;top:156;left:290;z-index:10001;
 					background-color:white" id="OPP_HBAR_Cover"></div>
+		<!-- white bar to cover player hp bar as needed -->
+		<div class="battle" style="width:0px;height:4px;border:2px;border-color:white;
+			        position:absolute;top:395;left:526;z-index:10001;
+					background-color:white" id="PLYR_HBAR_Cover"></div>
 		
+		<!-- The four attack buttons -->			
 		<button type="button" id="atk1" style="width:139;height:47;position:absolute; 
-				top:475px; left:100px;z-index:100;background:url('atk_button.png')" 
-				onclick="attack('1')" class="battle"> Attack 1 </button>
+				top:475px; left:100px;z-index:1000;background:url('atk_button.png')" 
+				onclick="attack('1')" class="battle btn"> Attack 1 </button>
 		
 		<button type="button" id="atk2" style="width:139;height:47;position:absolute; 
-				top:475px; left:249px;z-index:10;background:url('atk_button.png')" onclick="attack('2')" class="battle"> Attack 2 </button>
+				top:475px; left:249px;z-index:1000;background:url('atk_button.png')" onclick="attack('2')"  class="battle btn"> Attack 2 </button>
 		
 		<button type="button" id="atk3" style="width:139;height:47;position:absolute; 
-			    top:525px; left:100px;z-index:10;background:url('atk_button.png')"
-				onclick="attack('3')"class="battle"> Attack 3 </button>
+			    top:525px; left:100px;z-index:1000;background:url('atk_button.png')"
+				onclick="attack('3')"class="battle btn"> Attack 3 </button>
 		
 		<button type="button" id="atk4" style="width:139;height:47;position:absolute;
-			    top:525px; left:249px;z-index:10;background:url('atk_button.png')" 
-				onclick="attack('4')" class="battle"> Attack 4 </button>
+			    top:525px; left:249px;z-index:1000;background:url('atk_button.png')" 
+				onclick="attack('4')" class="battle btn"> Attack 4 </button>
+		
+		<!-- Pokemon Team button -->			
+		<button type="button" id="team" style="width:139;height:47;position:absolute;
+			    top:475px; left:398px;z-index:1000;background:url('atk_button.png')" 
+				onclick="show_team()" class="battle btn"> Team </button>
+		
+		<!-- Pokemon Team button -->
+		<button type="button" id="run" style="width:139;height:47;position:absolute;
+			    top:525px; left:398px;z-index:1000;background:url('atk_button.png')" 
+				onclick="run()" class="battle btn"> Run </button>
 		
 					
 	</body>
