@@ -6,7 +6,7 @@ const PLYR_HBAR_XMAX = 526;
 const HP_BAR_WIDTH = 148;
 var PLYR_POKE;
 var OPP_POKE;
-
+var anim_flag = 4;
 
 
 function adjust_opp_hp_bar(loops, max_loops, mod, bar) {
@@ -151,19 +151,38 @@ function show_class(to_show){
 }
 
 function attack(num) {
-	//hide_class("btn");
-	//player_attack_animation_loop();
-	//opponent_hit_animation_loop();
+	hide_class("btn");
+	player_attack_animation_loop();
+	setTimeout(opponent_hit_animation_loop,500);
+	setTimeout(opponent_attack_animation_loop,1000);
+	setTimeout(player_hit_animation_loop,1500);
 	console.log("do attack " + num);
+	setTimeout(show_class.bind(null, "btn"), 2000);
 }
 
 function show_team() {
 	console.log("display pokemon");
 }
 
+//percent is the percent of hp remaining on the pokemon swapping in
+//player is same as above, 1 for player and 0 for computer
+function swap_hp_bar(percent, player) {
+	if(player == false) {
+		bar = document.getElementById("OPP_HBAR_Cover");
+		bar.style.left = OPP_HBAR_XMIN;
+		bar.style.width = HP_BAR_WIDTH;
+	} else {
+		bar = document.getElementById("PLYR_HBAR_Cover");
+		bar.style.left = PLYR_HBAR_XMIN;
+		bar.style.width = HP_BAR_WIDTH;
+	}
+	setTimeout(show_damage.bind(null, -percent, player), 1000);
+}
+
 function startBattle() {
 	show_damage(.50, 1);
 	show_damage(.33,0);
+	setTimeout(swap_hp_bar.bind(null, 1, 1),2000);
 	//PLYR_POKE = new Pokemon(/*insert parameter here*/);
 	//PLYR_POKE = new Pokemon(/*insert parameter here*/);
 }
