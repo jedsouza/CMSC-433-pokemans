@@ -3,18 +3,19 @@ const OPP_HBAR_XMIN = 141;
 const OPP_HBAR_XMAX = 289;
 const PLYR_HBAR_XMIN = 377;
 const PLYR_HBAR_XMAX = 526;
-const HP_BAR_WIDTH = 148;
+const HP_BAR_WIDTH = 149;
 var PLYR_POKE;
 var OPP_POKE;
 var anim_flag = 4;
 
-
+//called by show_damage, moves left edge of the white bar to
+//cover opponent's hp bar, looks like hp draining.
 function adjust_opp_hp_bar(loops, max_loops, mod, bar) {
 	let x = parseInt(bar.style.left);
 	let w = parseInt(bar.style.width);
 	x -= mod;
 	w += mod;
-	
+	//do max_loops iterations unless 100% full or empty reached
 	if(loops < max_loops && x >= OPP_HBAR_XMIN && x<= OPP_HBAR_XMAX) {
 		bar.style.left = `${x}`;
 		bar.style.width = `${w}`;
@@ -22,12 +23,14 @@ function adjust_opp_hp_bar(loops, max_loops, mod, bar) {
 	}
 }
 
+//called by show_damage, moves left edge of the white bar to
+//cover player's hp bar, looks like hp draining
 function adjust_plyr_hp_bar(loops, max_loops, mod, bar) {
 	let x = parseInt(bar.style.left);
 	let w = parseInt(bar.style.width);
 	x -= mod;
 	w += mod;
-	if(loops < max_loops && x >= PLYR_HBAR_XMIN && x<= PLYR_HBAR_XMAX) {
+	if(loops < max_loops && x >= PLYR_HBAR_XMIN && x<= PLYR_HBAR_XMAX) {	
 		bar.style.left = `${x}`;
 		bar.style.width = `${w}`;
 		setTimeout(adjust_plyr_hp_bar.bind(null,loops+1,max_loops, mod, bar),3);
@@ -37,25 +40,45 @@ function adjust_plyr_hp_bar(loops, max_loops, mod, bar) {
 //takes in percent of damage done as a float (55% damage = .55)
 //player == true means player takes damage
 //player == false means computer takes damage
+//mod is the amount to adjust the bar
+//bar is the element to be adjusted
 function show_damage(percent, player) {
+	
 	let mod;
+	//positive percent is damage, negative is healing
 	if(percent>=0) {
-		mod = 1;
+		mod = 1; //bar widens by 1 pixel 
 		max_loops = parseInt(percent * HP_BAR_WIDTH);
 	}
 	else{
-		mod = -1;
+		mod = -1; //bar narrows by 1 pixel
 		max_loops = parseInt(-1 * percent * HP_BAR_WIDTH);
 	}
-	var bar;
+	
+	let bar;
+	//if showing damage on the computer
 	if(player == false) {
 		bar = document.getElementById("OPP_HBAR_Cover");
-		setTimeout(adjust_opp_hp_bar.bind(null, 0, max_loops, mod, bar),3);
+		adjust_opp_hp_bar(0, max_loops, mod, bar);
+	} else /*if showing damage on the player*/ { 
+		bar = document.getElementById("PLYR_HBAR_Cover");
+		adjust_plyr_hp_bar(0, max_loops, mod, bar);
+	}
+}
+
+//percent is the percent of hp remaining on the pokemon swapping in
+//player is same as above, 1 for player and 0 for computer
+function swap_hp_bar(percent, player) {
+	if(player == false) {
+		bar = document.getElementById("OPP_HBAR_Cover");
+		bar.style.left = OPP_HBAR_XMIN;
+		bar.style.width = HP_BAR_WIDTH;
 	} else {
 		bar = document.getElementById("PLYR_HBAR_Cover");
-		setTimeout(adjust_plyr_hp_bar.bind(null, 0, max_loops, mod, bar),3);
+		bar.style.left = PLYR_HBAR_XMIN;
+		bar.style.width = HP_BAR_WIDTH;
 	}
-
+	setTimeout(show_damage.bind(null, -percent, player), 1000);
 }
 
 //poke is an element holding the pokemon to move
@@ -102,6 +125,58 @@ function move_diagonal(poke, steps, steps_to_take, d_per_step, t_per_step, quadr
 	}
 }
 
+//animation to swap out opponent pokemon, called by swap_opp_poke
+function withdraw_opp_animation_loop(loops, id) {
+	let poke = document.getElementById("OPP_POKE");
+	
+	//shrink and go up and right
+	if(loops < 24){
+		poke.style.top = `${parseInt(poke.style.top) - 1}`;
+		poke.style.left = `${parseInt(poke.style.left) + 4}`;
+		poke.style.width = `${96 - loops * 4}px`;
+		poke.style.height = 'auto';
+		setTimeout(withdraw_opp_animation_loop.bind(null, loops+1, id), 10);
+	}
+	//switch to new sprite
+	else if(loops == 24) {
+		poke.src = `poke_front/poke_${id}.png`;
+		setTimeout(withdraw_opp_animation_loop.bind(null, loops+1, id), 500);
+	}
+	//expand, go down and left
+	else if(loops <= 48) {
+		poke.style.top = `${parseInt(poke.style.top) + 1}`;
+		poke.style.left = `${parseInt(poke.style.left) - 4}`;
+		poke.style.width = `${4 + (loops - 24) * 4}px`;
+		poke.style.height = 'auto';
+		setTimeout(withdraw_opp_animation_loop.bind(null, loops+1, id), 10);
+	}
+}
+
+//same as above, different direction
+function withdraw_plyr_animation_loop(loops, id) {
+	let poke = document.getElementById("PLYR_POKE");
+	if(loops < 24){
+		poke.style.top = `${parseInt(poke.style.top) - 1}`;
+		poke.style.left = `${parseInt(poke.style.left) - 4}`;
+		poke.style.width = `${96 - loops * 4}px`;
+		poke.style.height = 'auto';
+		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 10);
+	}
+	else if(loops == 24) {
+		poke.src = `poke_back/poke_${id}.png`;
+		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 500);
+	}
+	else if(loops <= 48) {
+		
+		poke.style.top = `${parseInt(poke.style.top) + 1}`;
+		poke.style.left = `${parseInt(poke.style.left) + 4}`;
+		poke.style.width = `${4 + (loops - 24) * 4}px`;
+		poke.style.height = 'auto';
+		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 10);
+	}
+}
+
+//does the player attack animation
 function player_attack_animation_loop() {
 	let poke = document.getElementById("PLYR_POKE");
 	move(poke, 1, 10, 2, 3, "x");
@@ -110,6 +185,7 @@ function player_attack_animation_loop() {
 	setTimeout(move.bind(null, poke, 1, 10, -2, 3, "x"),133);
 }
 
+//does the player hit animation
 function player_hit_animation_loop() {
 	let poke = document.getElementById("PLYR_POKE");
 	move_diagonal(poke, 1, 25, 2, 1, 3);
@@ -118,7 +194,7 @@ function player_hit_animation_loop() {
 	setTimeout(move_diagonal.bind(null, poke, 1, 25, 2, 1, 1), 300);
 }
 
-
+//does the animation for opponent's attack
 function opponent_attack_animation_loop() {
 	let poke = document.getElementById("OPP_POKE");
 	move(poke, 1, 10, -2, 3, "x");
@@ -127,7 +203,7 @@ function opponent_attack_animation_loop() {
 	setTimeout(move.bind(null, poke, 1, 10, 2, 3, "x"),133);
 }
 
-
+//does the animation for the opponent getting hit
 function opponent_hit_animation_loop() {
 	let poke = document.getElementById("OPP_POKE");
 	move_diagonal(poke, 1, 25, 2, 1, 1);
@@ -136,6 +212,7 @@ function opponent_hit_animation_loop() {
 	setTimeout(move_diagonal.bind(null, poke, 1, 25, 2, 1, 3), 300);
 }
 
+//helper function to simplify code
 function hide_class(to_hide){
 	let members = document.getElementsByClassName(`${to_hide}`);
 	for(let i = 0; i < members.length; i++) {
@@ -143,6 +220,7 @@ function hide_class(to_hide){
 	}
 }
 
+//helper function to simplify code
 function show_class(to_show){
 	let members = document.getElementsByClassName(`${to_show}`);
 	for(let i = 0; i < members.length; i++) {
@@ -150,39 +228,38 @@ function show_class(to_show){
 	}
 }
 
+//random stuff in here, mostly how I do testing
 function attack(num) {
 	hide_class("btn");
-	player_attack_animation_loop();
-	setTimeout(opponent_hit_animation_loop,500);
-	setTimeout(opponent_attack_animation_loop,1000);
-	setTimeout(player_hit_animation_loop,1500);
+	//setTimeout(swap_opp_poke.bind(null, Math.floor(Math.random() * 152), Math.random()),1);
+	//setTimeout(swap_plyr_poke.bind(null, Math.floor(Math.random() * 152), Math.random()),1);
+	swap_opp_poke(0,0);
 	console.log("do attack " + num);
 	setTimeout(show_class.bind(null, "btn"), 2000);
 }
+
 
 function show_team() {
 	console.log("display pokemon");
 }
 
-//percent is the percent of hp remaining on the pokemon swapping in
-//player is same as above, 1 for player and 0 for computer
-function swap_hp_bar(percent, player) {
-	if(player == false) {
-		bar = document.getElementById("OPP_HBAR_Cover");
-		bar.style.left = OPP_HBAR_XMIN;
-		bar.style.width = HP_BAR_WIDTH;
-	} else {
-		bar = document.getElementById("PLYR_HBAR_Cover");
-		bar.style.left = PLYR_HBAR_XMIN;
-		bar.style.width = HP_BAR_WIDTH;
-	}
-	setTimeout(show_damage.bind(null, -percent, player), 1000);
+function run(){
+	console.log("flee encounter");
 }
 
+//does all required graphical changes besides name and level
+//for swapping opponent's pokemon
+function swap_opp_poke(id_to_swap, percent_remaining) {
+	withdraw_opp_animation_loop(0, id_to_swap);
+	swap_hp_bar(percent_remaining,0);
+}
+
+function swap_plyr_poke(id_to_swap, percent_remaining) {
+	withdraw_plyr_animation_loop(0, id_to_swap);
+	swap_hp_bar(percent_remaining,1);
+}
+
+//anything that needs to be done before battle starts
 function startBattle() {
-	show_damage(.50, 1);
-	show_damage(.33,0);
-	setTimeout(swap_hp_bar.bind(null, 1, 1),2000);
-	//PLYR_POKE = new Pokemon(/*insert parameter here*/);
-	//PLYR_POKE = new Pokemon(/*insert parameter here*/);
+
 }
