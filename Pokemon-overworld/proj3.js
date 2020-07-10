@@ -21,7 +21,7 @@ var animating = false;
 
 //Experimental for now, used to add things to the field
 //functions for moving them around not implemented yet
-var field_elements = [];
+//var field_elements = [];
 var spots = [];
 spots["89,62"] = "full";
 
@@ -33,8 +33,7 @@ function layering() {
 	for(let j = 0; j < items.length; j++)
 	{
 		//layer is equal to y coordinate
-		console.log(items)
-		items[j].style.zIndex = `${items[j].style.top}`;
+		items[j].style.zIndex = `${parseInt(items[j].style.top)}`;
 	}
 }
 
@@ -77,7 +76,7 @@ function add_element(type, group, width, height, src, x, y) {
 	x = 89 + 32*x;
 	y = 62 + 32*y;
 	var newElement = new Field_element(type, group, width, height, src, x, y);
-	field_elements.push(newElement);
+	//field_elements.push(newElement);
 }
 
 //will be used to detect collision so you can't walk on top of charmander
@@ -163,20 +162,9 @@ function start_move() {
 	}
 }
 
-//moves the background instead of the character
-function do_move_background(coord, mod, count, offset) {
-	
-
-	//find new offset, 1 in the opposite direction of the characters direction
-	//mod makes it appear to loop around infinitely
-	offset+=mod
-	offset = offset%MOVE_LIMIT;
-	
-	//update the position
+function move_field_elements(coord, mod) 
+{		
 	if(coord == Y) {
-		bg_img_element.style.backgroundPosition = `0px ${offset}px`;
-
-		//move all field objects along with the background
 		for(let i = 0; i < index; i++){
 			let element = document.getElementById(`field${i}`);
 			let y = parseInt(element.dataset.y) + mod;
@@ -185,17 +173,31 @@ function do_move_background(coord, mod, count, offset) {
 				element.style.top = `${y}`;
 		}
 	}
-	else { //(if coord == X)
-		bg_img_element.style.backgroundPosition = `${offset}px 0px`; 
+	else {
 		for(let i = 0; i < index; i++){
 			let element = document.getElementById(`field${i}`);
 			let x = parseInt(element.dataset.x) + mod;
-			console.log(x);
 			element.dataset.x = x; 
 			if(x<=656)
 				element.style.left = `${x}`;
 		}
-	}	
+	}
+}
+
+//moves the background instead of the character
+function do_move_background(coord, mod, count, offset) {
+	
+	//find new offset, 1 in the opposite direction of the characters direction
+	//mod makes it appear to loop around infinitely
+	offset+=mod;
+	offset = offset%MOVE_LIMIT;
+	//update the position
+	if(coord == Y) 
+		 bg_img_element.style.backgroundPosition = `0px ${offset}px`;
+	
+	else bg_img_element.style.backgroundPosition = `${offset}px 0px`; 	
+	
+	move_field_elements(coord, mod);
 	
 	//keep moving it until the limit is reached to ensure alignment
 	if(count < MOVE_LIMIT) {
@@ -203,6 +205,7 @@ function do_move_background(coord, mod, count, offset) {
 	}
 	//when limit is reached, indicate end of movement
 	else {
+		move_field_elements(coord, mod);
 		for(let i = 0; i < index; i++){
 			let element = document.getElementById(`field${i}`);
 			spots[`${element.dataset.x},${element.dataset.y}`] = "full";
@@ -217,8 +220,7 @@ function do_move_background(coord, mod, count, offset) {
 			animate();
 		}
 		moving = false;
-	}
-		
+	}		
 }
 
 
@@ -239,7 +241,6 @@ function do_move(coord, mod, steps) {
 		
 		layering();
 		spots[`${pos[0]},${pos[1]}`] = "full";
-		console.log(spots);
 		if(keyPressed == -1) {
 			clearInterval(tID_animate);		
 			animating = false;
@@ -357,6 +358,6 @@ function startUp()
 	
 	//adds some charmanders to the field for testing purposes
 	add_element("img", "object", 57, 60, "004Charmander.png", 4, 3);
-	add_element("img", "object", 57, 60, "004Charmander.png", 25, 1);
-	add_element("img", "object", 57, 60, "004Charmander.png", -5, 0);
+	add_element("img", "object", 57, 60, "004Charmander.png", 5, 4);
+	//add_element("img", "object", 57, 60, "004Charmander.png", -5, 0);
 }
