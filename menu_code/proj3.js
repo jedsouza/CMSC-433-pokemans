@@ -19,6 +19,10 @@ const Y = 1;				//pos[Y] is the y coordinate
 var test_element;
 var animating = false;
 
+var field_elements = [];
+
+//************ */
+
 var enemies = []
 
 var lock = 0
@@ -52,7 +56,7 @@ function Field_element(type, group, width, height, src, x, y) {
 	newElem.id = `field${index}`;
 	newElem.style.zIndex = `${y}`;
 	index++;
-	document.getElementById('test').appendChild(newElem);
+	document.getElementById('Test').appendChild(newElem);
 }
 
 //adds an item to the field
@@ -62,35 +66,34 @@ function add_element(type, group, width, height, src, x, y) {
 }
 
 //will be used to detect collision so you can't walk on top of charmander
-function against_element(x,y) { 
+function against_element(x, y) {
 	// console.log("x:",x," y:",y)
-	
-	for(var ctr = 0; ctr < enemies.length; ctr++){
+
+	for (var ctr = 0; ctr < enemies.length; ctr++) {
 		// console.log(enemies[ctr]["x"] - 30,(enemies[ctr]["y"] - 30))
-		if(x > (enemies[ctr]["x"] - 30) && x < (enemies[ctr]["x"] + 30) & y > (enemies[ctr]["y"] - 30) && y < (enemies[ctr]["y"] + 30)  ){
-			// console.log("hit! " + enemies[ctr]["id"])
-			
-			return enemies[ctr]["id"]
+		if (x > (enemies[ctr]["x"] - 30) && x < (enemies[ctr]["x"] + 30) & y > (enemies[ctr]["y"] - 30) && y < (enemies[ctr]["y"] + 30)) {
+			console.log("hit! " + enemies[ctr]["id"])
+			saveEnemy(enemies[ctr]["id"], enemies[ctr]["xp"])
 		}
 	}
 }
 
-function saveEnemy(num){
+function saveEnemy(num, xp) {
 
 	enemy_id = 1
 	console.log("enter!" + num)
 
-    $.ajax({
-        type: "POST",  //type of method
-        url: "php/send_enemy.php",  //your page
-        data: { enemy_id: enemy_id, poke_id: num },// passing the values
-        success: function (res) {
-          console.log("success")             //do what you want here...
-          $("#change").html(res);  
-        }
-	  });
-	  
-	  location.replace("http://localhost/project3/battle_gui.html") 
+	$.ajax({
+		type: "POST",  //type of method
+		url: "php/send_enemy.php",  //your page
+		data: { enemy_id: enemy_id, poke_id: num, xp: xp },// passing the values
+		success: function (res) {
+			console.log("success")             //do what you want here...
+			// $("#change").html(res);
+		}
+	});
+
+	location.replace("http://localhost/project3/new_battle.html")
 }
 
 
@@ -114,6 +117,7 @@ function start_move() {
 
 	//starts animation if necessary
 	if (animating == false) {
+		
 		animating = true;
 		animate();			//does first frame of animation immediately
 		tID_animate = setInterval(animate.bind(null), 140);
@@ -125,7 +129,7 @@ function start_move() {
 	if (direction == 1 || direction == 3) modifier = -1;
 
 	//check if move would leave the valid area
-	//if it would, move the bacground instead
+	//if it would, move the background instead
 	let test_value = pos[coordinate] + modifier;
 	if (test_value < MIN_POS[coordinate] || test_value > MAX_POS[coordinate]) {
 		do_move_background(coordinate, modifier * -1, 1, 0);
@@ -194,13 +198,7 @@ function do_move(coord, mod, steps) {
 	div_element.style.top = pos[Y] + 'px';
 	div_element.style.zIndex = `${pos[Y]}`
 
-	if(lock < 1 && against_element(pos[X],pos[Y]) > 0){
-		console.log("double hit!")
-		newList = []
-		newList.push(against_element(pos[X],pos[Y]))
-		saveEnemy(newList)
-		lock = 1
-	}
+	against_element(pos[X], pos[Y])
 
 	layering();
 	if (steps < MOVE_LIMIT) {
@@ -208,6 +206,7 @@ function do_move(coord, mod, steps) {
 	}
 	else {
 		if (keyPressed == -1) {
+			console.log("enter here!")
 			clearInterval(tID_animate);
 			animating = false;
 			fr_num = 0;
@@ -217,20 +216,17 @@ function do_move(coord, mod, steps) {
 	}
 }
 
-
 ctr = 0
+
 //handles a key being pressed
 function handle_input(evt) {
 	var key = evt.keyCode;
-
-	
 	//prevent overlapping input, lock function if already animating
 	if (keyPressed == -1) {
 
 		//handle new input by saving direction and the offset
 		//required for slicing the sprite sheet
 		keyPressed = key;
-		console.log(key)
 		if (key == 37 || key == 65) {
 			vertical_offset = 73;
 			direction = 1;
@@ -243,8 +239,8 @@ function handle_input(evt) {
 		} else if (key == 40 || key == 83) {
 			vertical_offset = 7;
 			direction = 0;
-
-		} else if (key == 89) {
+		}
+		else if (key == 89) {
 			if (ctr % 2 == 0) {
 				document.getElementById("mySidenav").style.width = "250px";
 			}
@@ -254,7 +250,8 @@ function handle_input(evt) {
 			ctr++
 			keyPressed = -1;
 			return;
-		} else {
+		} 
+		else {
 			//on invalid key press, indicate no active input
 			//and clear out the saved keyPress
 			keyPressed = -1;
@@ -264,6 +261,7 @@ function handle_input(evt) {
 	}
 
 	if (moving == false) {
+
 		moving = true;
 		start_move();
 	}
@@ -291,8 +289,7 @@ function make_guards() {
 	topGuard.style.backgroundColor = "white"
 	topGuard.id = "topGuard";
 	topGuard.style.zIndex = "9000";
-	console.log(topGuard);
-	document.getElementById('test').appendChild(topGuard);
+	document.getElementById('Test').appendChild(topGuard);
 	var rightGuard = document.createElement("div");
 	rightGuard.style = "position:fixed;";
 	rightGuard.style.width = window.innerWidth - 687;
@@ -302,7 +299,7 @@ function make_guards() {
 	rightGuard.style.backgroundColor = "white"
 	rightGuard.id = "rightGuard";
 	rightGuard.style.zIndex = "9000";
-	document.getElementById('test').appendChild(rightGuard);
+	document.getElementById('Test').appendChild(rightGuard);
 	var leftGuard = document.createElement("div");
 	leftGuard.style = "position:fixed;";
 	leftGuard.style.width = 687;
@@ -312,7 +309,7 @@ function make_guards() {
 	leftGuard.style.backgroundColor = "white"
 	leftGuard.id = "leftGuard";
 	leftGuard.style.zIndex = "9000";
-	document.getElementById('test').appendChild(leftGuard);
+	document.getElementById('Test').appendChild(leftGuard);
 }
 
 //resize the white rectangles, called when window is resized
@@ -338,15 +335,18 @@ function startUp() {
 	//adds some charmanders to the field for testing purposes
 	// add_element("img", "object", 57, 60, "poke_front/poke_4.png", 185, 150);
 	// add_element("img", "object", 57, 60, "poke_front/poke_4.png", 217, 119);
-	addPokemonToMap(50,50,6)
-	addPokemonToMap(185,150,7)
-	addPokemonToMap(217,119,8)
-	
+	// addPokemonToMap(50,50,6)
+	// addPokemonToMap(185,150,7)
+
+
+
+	addPokemonToMap(217,119,8, 1)
+
 }
 
-function addPokemonToMap(x,y,num){
+function addPokemonToMap(x,y,num, xp){
 	add_element("img", "object", 57, 60, "poke_front/poke_"+ num +".png", x, y);
-	enemies.push({"x":x, "y": y, "id": num})
+	enemies.push({"x":x, "y": y, "id": num, "xp": xp})
 }
 
 
@@ -363,7 +363,7 @@ collectTeam("php/player_poke.php")
 
 function createPokeM(img, name, type1, type2, total, hp, attack, defence, spA, spD, speed, xp, ctr) {
 	// console.log("check5: " + )
-	toAdd = '<div id="borderDemo">            <img class="front1" src=" ' + img + ' ">            <div class="desc">                <p class="title">Name <br /> </p>                <p class="name">' + name + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Type 1 <br /> </p>                <p class="name">' + type1 + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Typ 2 <br /> </p>                <p class="name">' + type2 + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Total <br /> </p>                <p class="name">' + total + '  <br /> </p>            </div>            <div class="desc">                <p class="title">HP <br /> </p>                <p class="name">' + hp + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Attack <br /> </p>                <p class="name">' + attack + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Defence <br /> </p>                <p class="name">' + defence + '  <br /> </p>            </div>   <div class="desc">                <p class="title">XP <br /> </p>                <p class="name">' + xp + '  <br /> </p>            </div>      </div>'
+	toAdd = '<div id="borderDemo">            <img class="front1" src=" ' + img + ' ">            <div class="desc">                <p class="title">Name <br /> </p>                <p class="name">' + name + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Type 1 <br /> </p>                <p class="name">' + type1 + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Typ 2 <br /> </p>                <p class="name">' + type2 + '  <br /> </p>            </div>           <div class="desc">                <p class="title">HP <br /> </p>                <p class="name">' + hp + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Attack <br /> </p>                <p class="name">' + attack + '  <br /> </p>            </div>            <div class="desc">                <p class="title">Defence <br /> </p>                <p class="name">' + defence + '  <br /> </p>            </div>   <div class="desc">                <p class="title">XP <br /> </p>                <p class="name">' + xp + '  <br /> </p>            </div>      </div>'
 	document.getElementById("mySidenav").innerHTML += toAdd
 }
 
@@ -372,14 +372,14 @@ function toAdd(list) {
 	for (var ctr = 0; ctr < list.length - 1; ctr++) {
 		word = list[ctr]
 		word = word.split(" ")
-		pos = poke_id.indexOf(word[0])
+		poke_pos = poke_id.indexOf(word[0])
 
-		if (pos >= 0) {
-            // console.log("pos: " + xp[pos])
-			createPokeM("poke_front/poke_" + (ctr + 1) + ".png", word[1], word[2], word[3], word[4], hp[pos] , word[6], word[7], word[8], word[9], word[10], xp[pos], ctr + 1)
+		if (poke_pos >= 0) {
+			// console.log("poke_pos: " + xp[poke_pos])
+			createPokeM("poke_front/poke_" + (ctr + 1) + ".png", word[1], word[2], word[3], word[4], hp[poke_pos], word[6], word[7], word[8], word[9], word[10], xp[poke_pos], ctr + 1)
 			// console.log("added: " + word[0])
 		}
-		
+
 	}
 }
 
@@ -391,8 +391,8 @@ function createInit(list) {
 		word = word.split(",")
 		console.log(word[1])
 		player_id.push(word[0])
-        poke_id.push(word[1])
-        console.log(word[2],":",word[3])
+		poke_id.push(word[1])
+		console.log(word[2], ":", word[3])
 		hp.push(word[2])
 		xp.push(word[3])
 	}

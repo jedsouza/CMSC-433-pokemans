@@ -24,7 +24,7 @@ function CloseCon($conn)
  if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-      echo $row["enemy_id"] . "," . $row["poke_id"] . "\n";
+      echo $row["enemy_id"] . "," . $row["poke_id"] . "," . $row["xp"] . "\n";
     }
   } else {
     echo "0 results";

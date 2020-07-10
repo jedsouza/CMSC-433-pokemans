@@ -51,7 +51,7 @@ function checkBox(num){
 	if(num != curr_poke_pos){
 		initialize_pokemon(num)
 		console.log(curr_poke["hp"])
-		enemyAtk()
+		enemyAtk(1000)
 		console.log(curr_poke["hp"])
 	}
 	
@@ -94,17 +94,14 @@ function atk(num){
         
         playerAtk(num)
 		
-		setTimeout(enemyAtk.bind(null), 1500)
+		setTimeout(enemyAtk.bind(null, 200), 1500)
 		
 	}
 	else {
 		
-		enemyAtk()
-
+		enemyAtk(200)
 		
-        setTimeout(playerAtk.bind(null, num), 1500)
-			
-		
+        setTimeout(playerAtk.bind(null, num), 1500)	
 		
 	}
     console.log("curr_hp: " + curr_poke["hp"])
@@ -196,9 +193,9 @@ function playerAtk(num){
     }
 }
 
-function enemyAtk(){
+function enemyAtk(e_time){
 
-    setTimeout(opponent_attack_animation_loop.bind(null),200)
+    setTimeout(opponent_attack_animation_loop.bind(null), e_time)
 
 	num = Math.floor(Math.random() * 4); 
 	enemy_move = e_move_list[num]
@@ -223,8 +220,8 @@ function enemyAtk(){
         checkPoke()
     }
     else{
-        setTimeout( player_hit_animation_loop.bind(null), 800)
-        setTimeout( show_damage.bind(null, e_curr_perc, 1), 1000)
+        setTimeout( player_hit_animation_loop.bind(null), e_time + 600)
+        setTimeout( show_damage.bind(null, e_curr_perc, 1), e_time + 800)
     }
 }
 
@@ -391,6 +388,57 @@ function show_class(to_show){
 	}
 }
 
+//animation to swap out opponent pokemon, called by swap_opp_poke
+function withdraw_opp_animation_loop(loops, id) {
+	let poke = document.getElementById("OPP_POKE");
+	
+	//shrink and go up and right
+	if(loops < 24){
+		poke.style.top = `${parseInt(poke.style.top) - 1}`;
+		poke.style.left = `${parseInt(poke.style.left) + 4}`;
+		poke.style.width = `${96 - loops * 4}px`;
+		poke.style.height = 'auto';
+		setTimeout(withdraw_opp_animation_loop.bind(null, loops+1, id), 10);
+	}
+	//switch to new sprite
+	else if(loops == 24) {
+		poke.src = `poke_front/poke_${id}.png`;
+		setTimeout(withdraw_opp_animation_loop.bind(null, loops+1, id), 500);
+	}
+	//expand, go down and left
+	else if(loops <= 48) {
+		poke.style.top = `${parseInt(poke.style.top) + 1}`;
+		poke.style.left = `${parseInt(poke.style.left) - 4}`;
+		poke.style.width = `${4 + (loops - 24) * 4}px`;
+		poke.style.height = 'auto';
+		setTimeout(withdraw_opp_animation_loop.bind(null, loops+1, id), 10);
+	}
+}
+
+//same as above, different direction
+function withdraw_plyr_animation_loop(loops, id) {
+	let poke = document.getElementById("PLYR_POKE");
+	if(loops < 24){
+		poke.style.top = `${parseInt(poke.style.top) - 1}`;
+		poke.style.left = `${parseInt(poke.style.left) - 4}`;
+		poke.style.width = `${96 - loops * 4}px`;
+		poke.style.height = 'auto';
+		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 10);
+	}
+	else if(loops == 24) {
+		poke.src = `poke_back/poke_${id}.png`;
+		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 500);
+	}
+	else if(loops <= 48) {
+		
+		poke.style.top = `${parseInt(poke.style.top) + 1}`;
+		poke.style.left = `${parseInt(poke.style.left) + 4}`;
+		poke.style.width = `${4 + (loops - 24) * 4}px`;
+		poke.style.height = 'auto';
+		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 10);
+	}
+}
+
 // function attack(num) {
 // 	//hide_class("btn");
 // 	//player_attack_animation_loop();
@@ -452,6 +500,7 @@ function createPoke(list) {
 	collectTeam("php/enemy.php")
 }
 
+e_xp = []
 function createEnemy(list){
 	console.log("createEnemy")
 
@@ -460,7 +509,8 @@ function createEnemy(list){
 		word = word.split(",")
 		// console.log(word[1])
 		enemy_player_id.push(word[0])
-		enemy_id_list.push(word[1])
+        enemy_id_list.push(word[1])
+        e_xp.push(word[2])
 	}
 
 	enemy_id = enemy_id_list[0]
@@ -507,7 +557,10 @@ function toAddPoke(list) {
 			toAdd["type1"] = word[2]
 			toAdd["type2"] = word[3]
 			toAdd["total"] = word[4]
-			toAdd["hp"] = word[5]
+            toAdd["hp"] = word[5]
+
+            //change if there are multiple pokemons
+            toAdd["xp"] = e_xp[0]
 			toAdd["attack"] = word[6]
 			toAdd["defense"] = word[7]
 			toAdd["sp.atk"] = word[8]
@@ -616,6 +669,7 @@ function finalInit(list){
         console.log(my_poke[ctr])
         if(my_poke[ctr]["hp"] > 0){
             initialize_pokemon(ctr)
+            break;
         }
     }
 	// initialize_pokemon(curr_poke_pos)
@@ -654,11 +708,14 @@ function initialize_pokemon(num){
 
 	move_list = getMoves(curr_poke["poke_id"])
 
-	one = "poke_back/poke_" + curr_poke["poke_id"] + ".png"
+	// one = "poke_back/poke_" + curr_poke["poke_id"] + ".png"
+    // document.getElementById("PLYR_POKE").src = one
 
-    document.getElementById("PLYR_POKE").src = one
+    withdraw_plyr_animation_loop(0, curr_poke["poke_id"])
+
+
     document.getElementById("plyr_name").innerHTML = curr_poke["name"]
-    document.getElementById("plyr_lvl").innerHTML = "100"
+    document.getElementById("plyr_lvl").innerHTML = curr_poke["xp"]
     
     let mod;
     var bar = document.getElementById("PLYR_HBAR_Cover");
@@ -684,7 +741,7 @@ function initialize_e_pokemon(num){
 
     e_move_list = getMoves(enemy_id)
     document.getElementById("opp_name").innerHTML = enemy_poke["name"]
-    document.getElementById("opp_lvl").innerHTML = "100"
+    document.getElementById("opp_lvl").innerHTML = enemy_poke["xp"]
 }
 
 
