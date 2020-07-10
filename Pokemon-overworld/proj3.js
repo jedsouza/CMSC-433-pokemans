@@ -46,10 +46,19 @@ function Field_element(type, group, width, height, src, x, y){
 		newElem.style = "position:absolute;";
 		newElem.style.width = width;
 		newElem.style.height = height;
+		
 		newElem.dataset.y = y;
-		newElem.style.top = y;
+		if (y <= 656)
+			newElem.style.top = y;
+		else
+			newElem.style.top = 656;
+		
 		newElem.dataset.x = x;
-		newElem.style.left = x;
+		if (x <= 656)
+			newElem.style.left = x;
+		else
+			newElem.style.left = 656;
+		
 		newElem.src = src;
 		newElem.classList.add(`${group}`);
 		newElem.id = `field${index}`;
@@ -172,7 +181,7 @@ function do_move_background(coord, mod, count, offset) {
 			let element = document.getElementById(`field${i}`);
 			let y = parseInt(element.dataset.y) + mod;
 			element.dataset.y = y; 
-			if(y<656)
+			if(y<=656)
 				element.style.top = `${y}`;
 		}
 	}
@@ -183,7 +192,7 @@ function do_move_background(coord, mod, count, offset) {
 			let x = parseInt(element.dataset.x) + mod;
 			console.log(x);
 			element.dataset.x = x; 
-			if(x<656)
+			if(x<=656)
 				element.style.left = `${x}`;
 		}
 	}	
@@ -348,6 +357,6 @@ function startUp()
 	
 	//adds some charmanders to the field for testing purposes
 	add_element("img", "object", 57, 60, "004Charmander.png", 4, 3);
-	//add_element("img", "object", 57, 60, "004Charmander.png", 5, 1);
-	//add_element("img", "object", 57, 60, "004Charmander.png", -5, 0);
+	add_element("img", "object", 57, 60, "004Charmander.png", 25, 1);
+	add_element("img", "object", 57, 60, "004Charmander.png", -5, 0);
 }
