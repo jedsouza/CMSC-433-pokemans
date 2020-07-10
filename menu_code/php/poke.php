@@ -18,23 +18,7 @@ $array = [];
 //   // Close the file
 //   fclose($h);
 // }
-
-function OpenCon()
- {
- $dbhost = "localhost";
- $dbuser = "root";
- $dbpass = "12345";
- $db = "cmsc433_proj3";
- $conn = new mysqli($dbhost, $dbuser, $dbpass,$db) or die("Connect failed: %s\n". $conn -> error);
- 
- return $conn;
- }
- 
-function CloseCon($conn)
- {
- $conn -> close();
- }
-   
+require_once "conn.php";
 
  $conn = OpenCon();
  $sql = "SELECT `poke_id`, ` Name`, ` Type 1`, ` Type 2`, ` Total`,` HP`, ` Attack`, ` Defense`, ` Sp. Atk`, ` Sp. Def`, ` Speed` FROM poke_2";
