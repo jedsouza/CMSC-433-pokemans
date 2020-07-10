@@ -93,7 +93,7 @@ function saveEnemy(num, xp) {
 		}
 	});
 
-	location.replace("http://localhost/project3/new_battle.html")
+	location.replace("new_battle.html")
 }
 
 
