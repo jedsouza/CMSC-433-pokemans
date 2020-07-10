@@ -7,6 +7,9 @@
 	</head>
 	<!-- call startup function -->
 	<body id="body" onload="startBattle()" bgcolor='white'>
+	
+		<div id="topguard" style="position:fixed;width:687px;height:16px;top:0;left:0;
+								  background-color:white;z-index:9000"></div>
 				
 		<!-- holds the frame -->
 		<div id="fr_holder" style="position:absolute;left:0px; top:0px;z-index:1000">
@@ -29,6 +32,8 @@
 		<p               style="position:absolute;top:120px;left:220px">Lvl:</p>
 		<p id="opp_lvl"  style="position:absolute;top:120px;left:250px">100</p>
 		
+		
+		<img class="battle" id="tomb" src="tomb1.png" style="position:absolute; top:-150px; left:415px;height:'auto';width:100px;">
 		
 		<!-- holds the image for player pokemon -->
 		<img class="battle" id="PLYR_POKE" src="poke_back/poke_150.png" width="96"
