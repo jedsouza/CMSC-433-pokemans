@@ -1,0 +1,91 @@
+@font-face {
+    font-family: 'Press Start 2p';
+  }
+  body {
+    /* background-color: black; */
+    font-size: 30pt;
+    font-family: 'Press Start 2p';
+  }
+
+#menu {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    width: 650px;
+    height: 600px;
+}
+
+.ng_btn {
+    position: fixed;
+    left: 370px;
+    top: 360px;
+
+    width: 150px;
+    height: 20px;
+    font-size: .6em;
+
+    text-align: center;
+	margin:5px;
+    font-weight: bold;
+    padding: 10px 0 10px 10px ;
+    background-color: lightgray;
+    text-shadow: -1px -1px black, 1px 1px white;
+    color: gray;
+    -webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-o-border-radius: 7px;
+	border-radius: 7px;
+    box-shadow: 0 .2em gray; 
+    cursor: pointer;
+}
+
+.load_btn {
+    position: fixed;
+    left: 370px;
+    top: 420px;
+
+    width: 150px;
+    height: 20px;
+    font-size: .6em;
+
+    text-align: center;
+	margin:5px;
+    font-weight: bold;
+    padding: 10px 0 10px 10px ;
+    background-color: lightgray;
+    text-shadow: -1px -1px black, 1px 1px white;
+    color: gray;
+    -webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-o-border-radius: 7px;
+	border-radius: 7px;
+    box-shadow: 0 .2em gray; 
+    cursor: pointer;
+}
+
+.ng_btn:active{
+    box-shadow: none;
+    position: relative;
+    left: 370px;
+    top: 360px;
+
+}
+
+.load_btn:active {
+    box-shadow: none;
+    position: relative;
+    left: 370px;
+    top: 420px;
+}
+
+ #frame {
+    top: 0;
+    left: 0;
+    /* right: 0; */
+    
+    position: fixed;
+}
+
+#inside {
+    position: relative;
+} 

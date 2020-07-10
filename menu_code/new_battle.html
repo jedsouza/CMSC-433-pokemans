@@ -1,0 +1,74 @@
+<html>
+
+<head>
+    <!-- set up source info for page -->
+    <title>Pokemon Brown</title>
+    <script type="text/javascript" src="battle.js">
+    </script>
+    <script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="battle.css" />
+</head>
+<!-- call startup function -->
+
+<body id="body" onload="startBattle()" bgcolor='white'>
+
+    <!-- holds the frame -->
+    <div id="fr_holder" style="position:absolute;left:0px; top:0px;z-index:1">
+        <!-- set up the game frame -->
+        <p id="frame" style="height:656px;width:687px; background:url('img/frame_small.png') 0px 0px;"> </p>
+    </div>
+
+    <!-- holds the battle scene -->
+    <img class="battle" src="img/new_battle.png" width="545" height="381"
+        style="position:absolute; top:82px; left:63px;">
+    <!-- holds the bottom section -->
+    <img class="battle" src="img/menu_frame.png" width="545" height="129"
+        style="position:absolute; top:463px; left:63px;z-index:2">
+    <!-- holds the image for opponent pokemon -->
+    <img class="battle" id="OPP_POKE" src="poke_front/poke_1.png" width="96" height="96"
+        style="position:absolute; top:130px; left:415px;">
+
+    <!-- for listing opponent info -->
+    <p id="opp_name" style="position:absolute;top:110px;left:110px">Pokemon Name</p>
+    <p style="position:absolute;top:110px;left:220px">Lvl:</p>
+    <p id="opp_lvl" style="position:absolute;top:110px;left:250px">100</p>
+
+
+    <!-- holds the image for player pokemon -->
+    <img class="battle" id="PLYR_POKE" src="poke_back/poke_1.png" width="96" height="96"
+        style="position:absolute; top:382px; left:150px; z-index:1">
+
+    <!-- for listing opponent info -->
+    <p id="plyr_name" style="position:absolute;top:350px;left:346px">Pokemon Name</p>
+    <p style="position:absolute;top:350px;left:456px">Lvl:</p>
+    <p id="plyr_lvl" style="position:absolute;top:350px;left:486px">100</p>
+
+
+    <!-- white bar to cover opponent hp bar as needed -->
+    <div class="battle" style="width:0px;height:4px;border:2px;border-color:white;
+			        position:absolute;top:156;left:290;z-index:10001;
+					background-color:white" id="OPP_HBAR_Cover"></div>
+    <!-- white bar to cover player hp bar as needed -->
+    <div class="battle" style="width:0px;height:4px;border:2px;border-color:white;
+			        position:absolute;top:395;left:526;z-index:10001;
+					background-color:white" id="PLYR_HBAR_Cover"></div>
+
+    <!-- The four attack buttons -->
+    <button type="button" id="atk1" onclick="sel()" class="battle"> Select Move </button>
+
+    <button type="button" id="atk2" onclick="poke_sel()" class="battle"> Select Pokemon </button>
+
+    <button type="button" id="atk3" onclick="attack('3')" class="battle"> Attack 3 </button>
+
+    <button type="button" id="atk4" onclick="attack('4')" class="battle"> Attack 4 </button>
+
+    <script>document.getElementById("atk3").style.visibility = "hidden"
+        document.getElementById("atk4").style.visibility = "hidden"</script>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" id="x_btn" class="closebtn" onclick="closeNav()">&times;</a>
+
+</body>
+
+</html>

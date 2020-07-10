@@ -1,0 +1,163 @@
+#atk1 {
+    width: 139;
+    height: 47;
+    position: absolute;
+    top: 475px;
+    left: 100px;
+    z-index: 100;
+    background: url('img/atk_button.png')
+}
+
+#atk2 {
+    width: 139;
+    height: 47;
+    position: absolute;
+    top: 475px;
+    left: 249px;
+    z-index: 100;
+    background: url('img/atk_button.png')
+}
+
+#atk3 {
+    width: 139;
+    height: 47;
+    position: absolute;
+    top: 525px;
+    left: 100px;
+    z-index: 100;
+    background: url('img/atk_button.png')
+}
+
+#atk4 {
+    width: 139;
+    height: 47;
+    position: absolute;
+    top: 525px;
+    left: 249px;
+    z-index: 100;
+    background: url('img/atk_button.png')
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.sidenav {
+    height: 452px;
+    width: 0;
+    position: fixed;
+    z-index: 100;
+    top: 80px;
+    left: 62px;
+    background-color: #f1f1f1;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+  
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+  
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+  
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+  
+  #borderDemo {
+      
+    border: 5px solid #000000;
+    border-radius: 20px 20px 20px 20px;
+    vertical-align: top;
+    margin: 1vw;
+    }
+  
+  .front1 {
+    /* width: 150px;
+    height: 150px; */
+    display: inline-block;
+  }
+  
+  .desc {
+    /* width: 120px;
+    height: 50px; */
+    font-size: .8em;
+    display: inline-block; 
+    vertical-align: top;
+    text-align: center;
+    /* bottom: 100px; */
+  }
+  
+  .title {
+    font-size: .9em;
+    font-weight: bolder;
+    margin-top: 1vw;
+    text-decoration: underline;
+  }
+  
+  .check_box {
+    margin-top: 2vw;
+    width: 10px;
+    height: 10px;
+  }
+  
+  #frame {
+    top: 0;
+    left: 0;
+    
+    position: fixed;
+  }
+  
+  #poke {
+    top: 3vw;
+    left: 2vw;
+    width: 30vw !important;
+    height: 26.6vw !important;
+    position: relative;
+    overflow-y:auto
+  }
