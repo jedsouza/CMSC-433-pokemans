@@ -6,9 +6,20 @@
 		</script>
 	</head>
 	<!-- call startup function -->
-	<body onload="startUp()" bgcolor='white'>
-		<!-- create a div to hold the sprite -->
-		<div id="bg_holder" style="position:absolute;left:0px; top:0px; z-index:-2;">
+	<body id="body" onload="startUp()" bgcolor='white'>
+		
+		<div id="fr_holder" style="position:absolute;left:0px; top:0px; z-index:1000">
+			<!-- set up the game frame -->
+			<p id = "frame" 
+			style="height:656px;
+					width:687px;
+					background:url('frame_small.png') 0px 0px;">  
+			</p>
+		</div>
+		
+		<!-- create a div to hold the background -->
+		<div id="bg_holder" style="position:absolute;left:0px; top:0px; z-index:-2000;"
+			 class="field">
 			<!-- set up starting image -->
 			<p id = "grass" 
 			style="height:656px;
@@ -16,15 +27,10 @@
 					background:url('grass.png') 0px 0px;">  
 			</p>
 		</div>
-		<div id="fr_holder" style="position:absolute;left:0px; top:0px; z-index:1">
-			<!-- set up starting image -->
-			<p id = "frame" 
-			style="height:656px;
-					width:687px;
-					background:url('frame_small.png') 0px 0px;">  
-			</p>
-		</div >
-		<div id="sprite_holder" style="position:absolute; left:89px; top:62px">
+
+		<!-- create a div to hold the sprite -->
+		<div id="sprite_holder" class="field object"
+			 style="position:absolute; left:89px; top:62px">
 			<!-- set up starting image -->
 			<p id = "sprite" 
 			style="height:60px;
@@ -33,7 +39,5 @@
 			</p>
 			
 		</div>
-		<p id="test" style="position:absolute; top:700px;">"here"</p>
-
 	</body>
 </html>

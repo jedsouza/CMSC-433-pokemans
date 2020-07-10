@@ -22,6 +22,8 @@ var animating = false;
 //Experimental for now, used to add things to the field
 //functions for moving them around not implemented yet
 var field_elements = [];
+var spots = [];
+spots["89,62"] = "full";
 
 //adjusts layers of all objects on the field to account for being in front of something
 function layering() {
@@ -31,6 +33,7 @@ function layering() {
 	for(let j = 0; j < items.length; j++)
 	{
 		//layer is equal to y coordinate
+		console.log(items)
 		items[j].style.zIndex = `${items[j].style.top}`;
 	}
 }
@@ -38,28 +41,43 @@ function layering() {
 //creates an object with the given characteristics, used for adding things
 //onto the field in the game
 function Field_element(type, group, width, height, src, x, y){
-	var newElem = document.createElement(`${type}`);
-	newElem.style = "position:absolute;";
-	newElem.style.width = width;
-	newElem.style.height = height;
-	newElem.style.top = y;
-	newElem.style.left = x;
-	newElem.src = src;
-	newElem.classList.add(`${group}`);
-	newElem.id = `field${index}`;
-	newElem.style.zIndex=`${y}`;
-	index++;
-	document.getElementById('body').appendChild(newElem);
+	if(spots[`{x},${y}`] != "full") {
+		var newElem = document.createElement(`${type}`);
+		newElem.style = "position:absolute;";
+		newElem.style.width = width;
+		newElem.style.height = height;
+		newElem.dataset.y = y;
+		newElem.style.top = y;
+		newElem.dataset.x = x;
+		newElem.style.left = x;
+		newElem.src = src;
+		newElem.classList.add(`${group}`);
+		newElem.id = `field${index}`;
+		newElem.style.zIndex=`${y}`;
+		index++;
+		spots[`${x},${y}`] = "full";
+		document.getElementById('body').appendChild(newElem);
+		return newElem;
+	}
+	else
+		return null;
 }
 	
 //adds an item to the field
 function add_element(type, group, width, height, src, x, y) {
+	x = 89 + 32*x;
+	y = 62 + 32*y;
 	var newElement = new Field_element(type, group, width, height, src, x, y);
 	field_elements.push(newElement);
 }
 
 //will be used to detect collision so you can't walk on top of charmander
-function against_element(coord, mod) {}
+function against_element(x, y) {
+	if(spots[`${x},${y}`] == "full")
+		return true;
+	else
+		return false;
+}
 
 
 				
@@ -79,7 +97,7 @@ function animate() {
 function start_move() {
 	let coordinate = X;		//defaults to x dimension
 	let modifier = 1;		//defaults to positive 
-	
+	let no_collision = true;
 	//starts animation if necessary
 	if(animating == false) {
 		animating = true;
@@ -92,15 +110,47 @@ function start_move() {
 	//change to positive direction
 	if (direction == 1 || direction == 3) modifier = -1;
 	
-	//check if move would leave the valid area
-	//if it would, move the bacground instead
-	let test_value = pos[coordinate] + modifier;
-	if(test_value < MIN_POS[coordinate] || test_value > MAX_POS[coordinate]){
-		do_move_background(coordinate, modifier*-1, 1, 0);
-	} 
-	else {
-		//do the move for the character
-		do_move(coordinate, modifier, 0);
+
+	
+	//check for collisions
+	if(coordinate == X) {
+		if(against_element(pos[0]+modifier*32, pos[1]) == true)
+			no_collision = false;
+	}
+	else if(coordinate == Y) {
+		if(against_element(pos[0], pos[1]+modifier*32) == true)
+			no_collision = false;
+	}
+				
+			
+	
+	if(no_collision) {
+		//check if move would leave the valid area
+		//if it would, move the bacground instead
+		let test_value = pos[coordinate] + modifier;
+		if(test_value < MIN_POS[coordinate] || test_value > MAX_POS[coordinate]){
+			
+			for(let i = 0; i < index; i++){
+				let element = document.getElementById(`field${i}`);
+				delete spots[`${element.dataset.x},${element.dataset.y}`];
+			}
+			do_move_background(coordinate, modifier*-1, 1, 0);
+		} 
+		else {
+			//do the move for the character
+			delete spots[`${pos[0]},${pos[1]}`];
+			do_move(coordinate, modifier, 0);
+		}
+	}
+	else{
+		
+		clearInterval(tID_animate);		
+		animating = false;
+		moving = false;
+		
+		//reset frame to 0, draw the frame so character stops on his feet
+		fr_num = 0;
+		animate();
 	}
 }
 
@@ -120,16 +170,21 @@ function do_move_background(coord, mod, count, offset) {
 		//move all field objects along with the background
 		for(let i = 0; i < index; i++){
 			let element = document.getElementById(`field${i}`);
-			let y = parseInt(element.style.top) + mod;
-			element.style.top = `${y}`;
+			let y = parseInt(element.dataset.y) + mod;
+			element.dataset.y = y; 
+			if(y<656)
+				element.style.top = `${y}`;
 		}
 	}
 	else { //(if coord == X)
 		bg_img_element.style.backgroundPosition = `${offset}px 0px`; 
 		for(let i = 0; i < index; i++){
 			let element = document.getElementById(`field${i}`);
-			let x = parseInt(element.style.left) + mod;
-			element.style.left = `${x}`;
+			let x = parseInt(element.dataset.x) + mod;
+			console.log(x);
+			element.dataset.x = x; 
+			if(x<656)
+				element.style.left = `${x}`;
 		}
 	}	
 	
@@ -139,6 +194,11 @@ function do_move_background(coord, mod, count, offset) {
 	}
 	//when limit is reached, indicate end of movement
 	else {
+		for(let i = 0; i < index; i++){
+			let element = document.getElementById(`field${i}`);
+			spots[`${element.dataset.x},${element.dataset.y}`] = "full";
+		}
+		layering();
 		if(keyPressed == -1) {
 			clearInterval(tID_animate);		
 			animating = false;
@@ -162,11 +222,15 @@ function do_move(coord, mod, steps) {
 	div_element.style.top = pos[Y] + 'px';
 	div_element.style.zIndex = `${pos[Y]}`
 	
-	layering();
+
 	if(steps < MOVE_LIMIT) {
 		setTimeout(do_move.bind(null, coord, mod, steps+1),3);
 	}
 	else {
+		
+		layering();
+		spots[`${pos[0]},${pos[1]}`] = "full";
+		console.log(spots);
 		if(keyPressed == -1) {
 			clearInterval(tID_animate);		
 			animating = false;
@@ -183,32 +247,30 @@ function do_move(coord, mod, steps) {
 function handle_input(evt) {
 	var key = evt.keyCode;
 	//prevent overlapping input, lock function if already animating
-	if(keyPressed == -1) 
-	{
-		
-		//handle new input by saving direction and the offset
-		//required for slicing the sprite sheet
-		keyPressed = key;
-		if (key == 37 || key == 65) {
-			vertical_offset = 73;
-			direction = 1;
-		} else if (key == 38 || key == 87 ) {
-			vertical_offset = 199;
-			direction = 3;
-		} else if (key == 39 || key == 68) {
-			vertical_offset = 135;
-			direction = 2;
-		} else if(key == 40 ||key == 83) {
-				vertical_offset = 7;
-				direction = 0;
-		} else{
-			//on invalid key press, indicate no active input
-			//and clear out the saved keyPress
-			keyPressed = -1;
-			return;
-		}
-
+	
+	//handle new input by saving direction and the offset
+	//required for slicing the sprite sheet
+	keyPressed = key;
+	if (key == 37 || key == 65) {
+		vertical_offset = 73;
+		direction = 1;
+	} else if (key == 38 || key == 87 ) {
+		vertical_offset = 199;
+		direction = 3;
+	} else if (key == 39 || key == 68) {
+		vertical_offset = 135;
+		direction = 2;
+	} else if(key == 40 ||key == 83) {
+			vertical_offset = 7;
+			direction = 0;
+	} else{
+		//on invalid key press, indicate no active input
+		//and clear out the saved keyPress
+		keyPressed = -1;
+		return;
 	}
+    
+	
 	
 	if (moving == false) {
 			moving = true;
@@ -222,6 +284,7 @@ function end_input(evt) {
 	
 	if(keyPressed == evt.keyCode)
 	{
+
 		//clear the stored key press
 		keyPressed = -1;
 	}
@@ -284,6 +347,7 @@ function startUp()
 	window.addEventListener('resize', resize);
 	
 	//adds some charmanders to the field for testing purposes
-	add_element("img", "object", 57, 60, "004Charmander.png", 185, 150);
-	add_element("img", "object", 57, 60, "004Charmander.png", 217, 119);
+	add_element("img", "object", 57, 60, "004Charmander.png", 4, 3);
+	//add_element("img", "object", 57, 60, "004Charmander.png", 5, 1);
+	//add_element("img", "object", 57, 60, "004Charmander.png", -5, 0);
 }
