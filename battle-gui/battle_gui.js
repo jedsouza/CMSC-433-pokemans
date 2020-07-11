@@ -162,7 +162,7 @@ function withdraw_plyr_animation_loop(loops, id) {
 		poke.style.height = 'auto';
 		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 10);
 	}
-/*	else if(loops == 24) {
+	else if(loops == 24) {
 		poke.src = `poke_back/poke_${id}.png`;
 		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 500);
 	}
@@ -173,7 +173,7 @@ function withdraw_plyr_animation_loop(loops, id) {
 		poke.style.width = `${4 + (loops - 24) * 4}px`;
 		poke.style.height = 'auto';
 		setTimeout(withdraw_plyr_animation_loop.bind(null, loops+1, id), 10);
-	}*/
+	}
 }
 
 //does the player attack animation
@@ -214,28 +214,63 @@ function opponent_hit_animation_loop() {
 
 
 
+function player_death_animation(id){
+	let tomb = document.getElementById("tomb");
+	tomb.style.left = "150px";
+	if(parseInt(tomb.style.top) < -80) {
+		tomb.style.top = `${parseInt(tomb.style.top) + 1}`;
+		setTimeout(player_death_animation.bind(null), 1);
+	}	
+	else if(parseInt(tomb.style.top) < -50) {
+		tomb.style.top = `${parseInt(tomb.style.top) + 3}`;
+		setTimeout(player_death_animation.bind(null), 1);
+	}	
+	else if(parseInt(tomb.style.top) < 200) {
+		tomb.style.top = `${parseInt(tomb.style.top) + 5}`;
+		setTimeout(player_death_animation.bind(null), 1);
+	}
+	else if(parseInt(tomb.style.top) < 302) {
+		let poke = document.getElementById("PLYR_POKE");
+		poke.style.top = `${parseInt(poke.style.top) + 7}`;
+		poke.style.height = `${96 - poke.style.top}px`;
+		tomb.style.top = `${parseInt(tomb.style.top) + 7}`;
+		setTimeout(player_death_animation.bind(null), 1);
+	}
+	else if(parseInt(tomb.style.top) >= 302) {
+		let poke = document.getElementById("PLYR_POKE");
+		poke.style="position: absolute; top: 358px; left: 54px; z-index:\
+		1; width: 4px; height: auto;"
+		setTimeout(reset_tomb.bind(null), 2000);
+	}
+}
+
 function opponent_death_animation(id){
 	let tomb = document.getElementById("tomb");
+	tomb.style.left = "415px";
 	if(parseInt(tomb.style.top) < -80) {
-		tomb.style.top = `${parseInt(tomb.style.top) + 1}`
+		tomb.style.top = `${parseInt(tomb.style.top) + 1}`;
 		setTimeout(opponent_death_animation.bind(null), 2);
 	}	
 	else if(parseInt(tomb.style.top) < -50) {
-		tomb.style.top = `${parseInt(tomb.style.top) + 2}`
+		tomb.style.top = `${parseInt(tomb.style.top) + 2}`;
 		setTimeout(opponent_death_animation.bind(null), 2);
 	}
 	else if(parseInt(tomb.style.top) < 50) {
 		let poke = document.getElementById("OPP_POKE");
 		poke.style.height = `${96 - (parseInt(tomb.style.top)+50)}px`;
 		poke.style.top = `${parseInt(poke.style.top) + 3}`;
-		tomb.style.top = `${parseInt(tomb.style.top) + 3}`
+		tomb.style.top = `${parseInt(tomb.style.top) + 3}`;
 		setTimeout(opponent_death_animation.bind(null), 1);
 	}
 	else if(parseInt(tomb.style.top) >= 50) {
 		document.getElementById("OPP_POKE").style="position: absolute;\
 		top: 106px; left: 511px; width: 4px; height: auto;";
-		setTimeout(eval.bind(null, "tomb.style.top = '-150px'"), 2000);
+		setTimeout(reset_tomb.bind(null), 2000);
 	}
+}
+
+function reset_tomb(x) {
+	document.getElementById("tomb").style.top = -150
 }
 	
 
@@ -258,11 +293,24 @@ function show_class(to_show){
 //random stuff in here, mostly how I do testing
 function attack(num) {
 	hide_class("btn");
-	//setTimeout(swap_opp_poke.bind(null, Math.floor(Math.random() * 152), Math.random()),1);
-	//setTimeout(swap_plyr_poke.bind(null, Math.floor(Math.random() * 152), Math.random()),1);
-	//swap_opp_poke(0,0);
-	opponent_death_animation();
-	setTimeout(swap_opp_after_death.bind(null, 125, 1),3000);
+	if(num == 1){
+		setTimeout(swap_opp_poke.bind(null, Math.floor(Math.random() * 152), Math.random()),1);
+		setTimeout(swap_plyr_poke.bind(null, Math.floor(Math.random() * 152), Math.random()),1);
+	}
+	else if (num == 2) {
+		player_death_animation();
+		setTimeout(swap_plyr_after_death.bind(null, Math.floor(Math.random() * 152), Math.random()),3000);
+	}
+	else if (num == 3) {
+		opponent_death_animation();
+		setTimeout(swap_opp_after_death.bind(null, Math.floor(Math.random() * 152), Math.random()),3000);
+	}
+	else if (num == 4) {
+		player_attack_animation_loop();
+		setTimeout(opponent_hit_animation_loop.bind(null),500);
+		setTimeout(opponent_attack_animation_loop.bind(null),1000);
+		setTimeout(player_hit_animation_loop.bind(null),1500);
+	}
 	console.log("do attack " + num);
 	setTimeout(show_class.bind(null, "btn"), 1000);
 }
@@ -290,6 +338,11 @@ function swap_opp_after_death(id_to_swap, percent_remaining) {
 
 function swap_plyr_poke(id_to_swap, percent_remaining) {
 	withdraw_plyr_animation_loop(0, id_to_swap);
+	swap_hp_bar(percent_remaining,1);
+}
+
+function swap_plyr_after_death(id_to_swap, percent_remaining) {
+	withdraw_plyr_animation_loop(24, id_to_swap);
 	swap_hp_bar(percent_remaining,1);
 }
 
