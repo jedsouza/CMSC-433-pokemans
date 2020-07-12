@@ -7,6 +7,7 @@ const HP_BAR_WIDTH = 149;
 var PLYR_POKE;
 var OPP_POKE;
 var anim_flag = 4;
+var prompts= false;
 
 //called by show_damage, moves left edge of the white bar to
 //cover opponent's hp bar, looks like hp draining.
@@ -215,7 +216,6 @@ function opponent_hit_animation_loop() {
 
 
 function player_death_animation(id){
-	var prompts;
 	let tomb = document.getElementById("tomb");
 	tomb.style.left = "150px";
 	if(parseInt(tomb.style.top) < -80) {
@@ -244,7 +244,7 @@ function player_death_animation(id){
 		setTimeout(reset_tomb.bind(null), 2000);
 	}
 	if(prompts != true){//added prompt to aid the storyline
-		window.alert("You are a member of team rocket. When you defeat pokemon you can sell their body parts for money and increase your standing in the organization");	
+		window.alert("You are a member of Team Rocket. When you kill a pokemon, you can sell their body parts for money and increase your standing in the organization");	
 	}
 	prompts = true;
 }
