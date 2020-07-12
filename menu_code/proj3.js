@@ -18,7 +18,7 @@ const Y = 1;				//pos[Y] is the y coordinate
 
 var test_element;
 var animating = false;
-
+var myTutorial;
 var field_elements = [];
 
 //************ */
@@ -330,8 +330,11 @@ function startUp() {
 	div_element = document.getElementById("sprite_holder");
 	bg_img_element = document.getElementById("grass");
 	make_guards();
-	window.alert("to move use w,a,s,d or the arrow keys");
-	window.alert("the 'y' key displays your selected pokemon including their health");
+	myTutorial = document.getElementById("tutorial-overlay");
+	myTutorial.innerHTML = "to move use w,a,s,d or the arrow keys";	
+	document.getElementById("tutorial-overlay").style.display = "block";
+	timeOut = setTimeout(function thatFunction(){myTutorial.innerHTML = "press 'y' to view Pokemon"; document.getElementById("tutorial-overlay").style.display = "block";},4000);
+	timeOut = setTimeout(function tutorialFunct(){document.getElementById("tutorial-overlay").style.display = "none";},8000);
 	//add listeners for required events
 	window.addEventListener('keydown', handle_input);
 	window.addEventListener('keyup', end_input);
@@ -348,6 +351,7 @@ function startUp() {
 	addPokemonToMap(217,119,8, 1)
 
 }
+
 
 function addPokemonToMap(x,y,num, xp){
 	add_element("img", "object", 57, 60, "poke_front/poke_"+ num +".png", x, y);
