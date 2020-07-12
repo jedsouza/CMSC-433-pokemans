@@ -81,10 +81,14 @@ function add_element(type, group, width, height, src, x, y) {
 
 //will be used to detect collision so you can't walk on top of charmander
 function against_element(x, y) {
-	if(spots[`${x},${y}`] == "full")
-		return true;
-	else
-		return false;
+	if(typeof(spots[`${x},${y}`]) === 'undefined'){
+		return "none";
+	}
+	else {
+		let poke = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+		console.log(poke.id);
+		return poke.id;
+	}
 }
 
 
@@ -119,15 +123,23 @@ function start_move() {
 	if (direction == 1 || direction == 3) modifier = -1;
 	
 
-	
+	let id_found;
 	//check for collisions
 	if(coordinate == X) {
-		if(against_element(pos[0]+modifier*32, pos[1]) == true)
+		
+		id_found = against_element(pos[0]+modifier*32, pos[1]);
+		
+		if(id_found != "none"){
 			no_collision = false;
+		}
 	}
 	else if(coordinate == Y) {
-		if(against_element(pos[0], pos[1]+modifier*32) == true)
+		
+		let id_found = against_element(pos[0], pos[1]+modifier*32);
+		
+		if(id_found != "none"){
 			no_collision = false;
+		}
 	}
 				
 			

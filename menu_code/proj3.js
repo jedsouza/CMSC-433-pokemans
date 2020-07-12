@@ -264,6 +264,9 @@ function handle_input(evt) {
 
 		moving = true;
 		start_move();
+
+		// random chance of enemy spawning on each tile walked
+		spawn_enemy();
 	}
 };
 
@@ -346,9 +349,37 @@ function startUp() {
 
 function addPokemonToMap(x,y,num, xp){
 	add_element("img", "object", 57, 60, "poke_front/poke_"+ num +".png", x, y);
-	enemies.push({"x":x, "y": y, "id": num, "xp": xp})
+	enemies.push({"x":x, "y": y, "id": num, "xp": xp});
 }
 
+function getAvgLvl() {
+	var numAlivePoke = 0;
+	var totalLvl = 0;
+	for(var i = 0; i < 6; i++) {
+		if(parseInt(hp[i]) > 0) {
+			numAlivePoke += 1;
+			totalLvl += parseInt(xp[i]);
+		}
+	}
+	return Math.floor(totalLvl / numAlivePoke);
+}
+
+// function to randomly spawn enemy pokemon near player
+function spawn_enemy() {
+	var spawnChance = .05;	// 5% spawn chance
+	if(Math.random() < spawnChance) {
+		// choose random tile 5 tiles away for spawning
+		var offsets = [[3,4], [4,3], [0,5], [5,0]];
+		var offsetDirections = [1, -1];
+
+		var chosenOffset = offsets[Math.floor(Math.random() * 4)];
+		chosenOffset[X] *= offsetDirections[Math.floor(Math.random() * 2)];
+		chosenOffset[Y] *= offsetDirections[Math.floor(Math.random() * 2)];
+
+		// add pokemon based on randomly calculated offset from player above (currently set to be 0 - 2 levels above average level of user's pokemon)
+		addPokemonToMap(MOVE_LIMIT * chosenOffset[X] + pos[X], MOVE_LIMIT * chosenOffset[Y] + pos[Y], Math.floor(Math.random() * 151) + 1, getAvgLvl() + Math.floor(Math.random() * 3));
+	}
+}
 
 //************************************************************************* */
 //in game menu code
