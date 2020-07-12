@@ -164,7 +164,8 @@ function startUp()
 	img_element = document.getElementById("sprite");
 	div_element = document.getElementById("sprite_holder");
 	bg_img_element = document.getElementById("grass");
-	
+	window.alert("to move use w,a,s,d or the arrow keys");
+	window.alert("the 'y' key displays your pokemon including their health");
 	//add listeners for required events
 	window.addEventListener('keydown', handle_input);
 	window.addEventListener('keyup', end_input);	
