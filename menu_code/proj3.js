@@ -372,7 +372,7 @@ function spawn_enemy() {
 		var offsets = [[3,4], [4,3], [0,5], [5,0]];
 		var offsetDirections = [1, -1];
 
-		var chosenOffset = offsets[Math.floor(Math.random() * 5)];
+		var chosenOffset = offsets[Math.floor(Math.random() * 4)];
 		chosenOffset[X] *= offsetDirections[Math.floor(Math.random() * 2)];
 		chosenOffset[Y] *= offsetDirections[Math.floor(Math.random() * 2)];
 
