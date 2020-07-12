@@ -1,0 +1,87 @@
+#borderDemo {
+    
+    border: 5px solid #000000;
+    border-radius: 20px 20px 20px 20px;
+    vertical-align: top;
+    margin: 1vw;
+    }
+
+.front1 {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    margin-right: 50px;
+}
+
+.sel{
+    position: fixed;
+    width: 30px;
+    height: 10px;
+    margin-top: 10px;
+}
+
+.desc {
+    /* width: 120px;
+    height: 50px; */
+    font-size: .8em;
+    display: inline-block; 
+    vertical-align: top;
+    text-align: center;
+    margin-right: 50px;
+    /* bottom: 100px; */
+}
+
+.title {
+    font-size: .9em;
+    font-weight: bolder;
+    margin-top: 1vw;
+    text-decoration: underline;
+}
+
+.check_box {
+    margin-top: 2vw;
+    width: 10px;
+    height: 10px;
+}
+
+#frame {
+    top: 0;
+    left: 0;
+    
+    position: fixed;
+}
+
+#poke {
+    top: 58px;
+    left: 50px;
+    width: 570px !important;
+    height: 510px!important;
+    position: relative;
+    overflow-y:auto
+}
+
+#change{
+    position: fixed;
+    top: 32.5vw;
+}
+
+#name{
+    z-index: 100;
+    position: fixed;
+    left: 500px;
+    top: 5px;
+}
+
+#label{
+    z-index: 100;
+    left: 400px;
+    top: -10px;
+    position: fixed;
+    color: white;
+}
+
+.closebtn {
+   
+    font-size: 36px;
+    margin-left: 50px;
+  }

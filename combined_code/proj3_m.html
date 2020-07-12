@@ -1,0 +1,52 @@
+<html>
+
+<head>
+	<!-- set up source info for page -->
+	<title>Pokemon Brown</title>
+	<!-- <script type="text/javascript" src="new_battle.js"></script> -->
+	<script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script type="text/javascript" src="proj3_m.js">
+	
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="proj3.css" />
+	
+</head>
+<!-- call startup function -->
+
+<body onload="startUp()" bgcolor='white'>
+
+	<div id="Test">
+		<!-- create a div to hold the sprite -->
+		<div id="bg_holder" style="position:absolute;left:0px; top:0px; z-index:-2;">
+			<!-- set up starting image -->
+			<p id="grass" style="height:656px;
+					width:687px;
+					background:url('img/grass.png') 0px 0px;">
+			</p>
+		</div>
+		<div id="fr_holder" style="position:absolute;left:0px; top:0px; z-index:99">
+			<!-- set up starting image -->
+			<p id="frame" style="height:656px;
+					width:687px;
+					background:url('img/frame_small.png') 0px 0px;">
+			</p>
+		</div>
+		<div id="sprite_holder" style="position:absolute; left:89px; top:62px">
+			<!-- set up starting image -->
+			<p id="sprite" style="height:60px;
+					width:57px;
+					background:url('img/sprite.png') 0px 0px;">
+			</p>
+
+		</div>
+		<p id="test" style="position:absolute; top:700px;">"here"</p>
+	</div>
+	<div id="mySidenav" class="sidenav">
+		<!-- <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a> -->
+		
+	  </div>
+
+</body>
+
+</html>
