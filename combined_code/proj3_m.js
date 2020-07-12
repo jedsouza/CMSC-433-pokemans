@@ -36,19 +36,20 @@ spots["89,62"] = "full";
 //adjusts layers of all objects on the field to account for being in front of something
 //adjusts layers of all objects on the field to account for being in front of something
 function layering() {
-	//get all objects
+	//get all objectss
 	let items = document.getElementsByClassName("object");
 
 	for(let j = 0; j < items.length; j++)
 	{
 		//layer is equal to y coordinate
 		// console.log(items)
-		items[j].style.zIndex = `${items[j].style.top}`;
+		items[j].style.zIndex = 5;
 	}
 }
 ///creates an object with the given characteristics, used for adding things
 //onto the field in the game
-function Field_element(type, group, width, height, src, x, y){
+function Field_element(type, group, width, height, src, x, y, id){
+	// console.log("id: ", id)
 	if(spots[`{x},${y}`] != "full") {
 		var newElem = document.createElement(`${type}`);
 		newElem.style = "position:absolute;";
@@ -69,8 +70,9 @@ function Field_element(type, group, width, height, src, x, y){
 		
 		newElem.src = src;
 		newElem.classList.add(`${group}`);
+		newElem.poke_id = id;
 		newElem.id = `field${index}`;
-		newElem.style.zIndex=`${y}`;
+		newElem.style.zIndex=5;
 		index++;
 		spots[`${x},${y}`] = "full";
 		document.getElementById('Test').appendChild(newElem);
@@ -81,31 +83,32 @@ function Field_element(type, group, width, height, src, x, y){
 }
 	
 //adds an item to the field
-function add_element(type, group, width, height, src, x, y) {
+function add_element(type, group, width, height, src, x, y, id) {
 	x = 89 + 32*x;
 	y = 62 + 32*y;
-	var newElement = new Field_element(type, group, width, height, src, x, y);
+	var newElement = new Field_element(type, group, width, height, src, x, y, id);
 	field_elements.push(newElement);
 }
 
 //will be used to detect collision so you can't walk on top of charmander
-function against_element(x, y) {
-	// console.log("x:",x," y:",y)
-	saveEnemy(enemies[ctr]["id"], enemies[ctr]["xp"])
-	// for (var ctr = 0; ctr < enemies.length; ctr++) {
-	// 	// console.log(enemies[ctr]["x"] - 30,(enemies[ctr]["y"] - 30))
-	// 	if (x > (enemies[ctr]["x"] - 30) && x < (enemies[ctr]["x"] + 30) & y > (enemies[ctr]["y"] - 30) && y < (enemies[ctr]["y"] + 30)) {
-	// 		console.log("hit! " + enemies[ctr]["id"])
-	// 		saveEnemy(enemies[ctr]["id"], enemies[ctr]["xp"])
-	// 	}
-	// }
+function against_element(x, y, id) {
+	// console.log("x:",x," y:",y, " id:",id)
+	
+	for (var ctr = 0; ctr < enemies.length; ctr++) {
+		// console.log(enemies[ctr]["x"] - 30,(enemies[ctr]["y"] - 30))
+		if (enemies[ctr]["id"] == id) {
+			console.log("hit! " + enemies[ctr]["id"] , ":", enemies[ctr]["xp"])
+			saveEnemy(enemies[ctr]["id"], enemies[ctr]["xp"])
+		}
+	}
 }
 
 function betterCollisionDetection(x, y){
 	
 	if(spots[`${x},${y}`] == "full"){
 		console.log("Got it! ", x, y)
-		return against_element(x,y);
+		let poke = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+		return against_element(x,y, poke.poke_id);
 	}
 	else
 		return false;
@@ -114,19 +117,20 @@ function betterCollisionDetection(x, y){
 function saveEnemy(num, xp) {
 
 	enemy_id = 1
-	console.log("enter!" + num)
-
+	console.log("enter:" + num)
+	send_id = []
+	send_id.push(num)
 	$.ajax({
 		type: "POST",  //type of method
 		url: "php/send_enemy.php",  //your page
-		data: { enemy_id: enemy_id, poke_id: num, xp: xp },// passing the values
+		data: { enemy_id: enemy_id, poke_id: send_id, xp: xp },// passing the values
 		success: function (res) {
 			console.log("success")             //do what you want here...
-			// $("#change").html(res);
+			console.log(res)
 		}
 	});
 
-	location.replace("http://localhost/project3/new_battle.html")
+	// location.replace("http://localhost/project3/new_battle.html")
 }
 
 
@@ -180,14 +184,15 @@ function start_move() {
 		//check if move would leave the valid area
 		//if it would, move the bacground instead
 		let test_value = pos[coordinate] + modifier;
-		if(test_value < MIN_POS[coordinate] || test_value > MAX_POS[coordinate]){
-			
+		// console.log(spots)
+		if (test_value < MIN_POS[coordinate] || test_value > MAX_POS[coordinate]) {
+
 			for(let i = 0; i < index; i++){
 				let element = document.getElementById(`field${i}`);
 				delete spots[`${element.dataset.x},${element.dataset.y}`];
 			}
 			do_move_background(coordinate, modifier*-1, 1, 0);
-		} 
+		}
 		else {
 			//do the move for the character
 			delete spots[`${pos[0]},${pos[1]}`];
@@ -406,30 +411,25 @@ function startUp() {
 	div_element = document.getElementById("sprite_holder");
 	bg_img_element = document.getElementById("grass");
 	make_guards();
+
+	myTutorial = document.getElementById("tutorial-overlay");
+	myTutorial.innerHTML = "to move use w,a,s,d or the arrow keys";	
+	document.getElementById("tutorial-overlay").style.display = "block";
+	timeOut = setTimeout(function thatFunction(){myTutorial.innerHTML = "press 'y' to view Pokemon"; document.getElementById("tutorial-overlay").style.display = "block";},4000);
+	timeOut = setTimeout(function tutorialFunct(){document.getElementById("tutorial-overlay").style.display = "none";},8000);
 	//add listeners for required events
 	window.addEventListener('keydown', handle_input);
 	window.addEventListener('keyup', end_input);
 	window.addEventListener('resize', resize);
 
-	//adds some charmanders to the field for testing purposes
-	// add_element("img", "object", 57, 60, "poke_front/poke_4.png", 185, 150);
-	// add_element("img", "object", 57, 60, "poke_front/poke_4.png", 217, 119);
-	// addPokemonToMap(50,50,6)
-	// addPokemonToMap(185,150,7)
-
-
-	// add_element("img", "object", 57, 60, "poke_front/poke_1.png", 4, 3);
-	// addPokemonToMap(4,3,8, 1)
-	// addPokemonToMap(10,10,50, 1)
-	for(ctr = 0; ctr < 20; ctr++){
-		spawn_enemy()
-	}
+	
 	
 }
 
 function addPokemonToMap(x,y,num, xp){
-	console.log("x: ", x, " y: ", y)
-	add_element("img", "object", 57, 60, "poke_front/poke_"+ num +".png", x, y);
+	// console.log("x: ", x, " y: ", y)
+	// console.log("xp: ", xp)
+	add_element("img", "object", 57, 60, "poke_front/poke_"+ num +".png", x, y, num);
 	enemies.push({"x":x, "y": y, "id": num, "xp": xp})
 }
 
@@ -449,7 +449,7 @@ function getAvgLvl() {
 function spawn_enemy() {
 	num = Math.random()
 	// console.log("enter: " + num )
-	var spawnChance = .5;	// 5% spawn chance
+	var spawnChance = .75;	// 5% spawn chance
 	if(num < spawnChance) {
 		// console.log("enter2")
 		// choose random tile 5 tiles away for spawning
@@ -460,8 +460,9 @@ function spawn_enemy() {
 		
 		num1 = Math.floor(Math.random() * 2)
 		num2 = Math.floor(Math.random() * 2)
-		test_x = (3 + Math.floor(Math.random() * 7))
-		test_y = (3 + Math.floor(Math.random() * 7))
+
+		test_x = (Math.floor( Math.random() * 7 + 3))
+		test_y = (Math.floor( Math.random() * 7 + 3))
 		console.log(test_x, ":" , test_y)
 		x_pos = test_x * offsetDirections[num1]
 		y_pos = test_x *  offsetDirections[num2]
@@ -472,6 +473,8 @@ function spawn_enemy() {
 
 		// add pokemon based on randomly calculated offset from player above (currently set to be 0 - 2 levels above average level of user's pokemon)
 		addPokemonToMap(x_pos , y_pos, Math.floor(Math.random() * 151) + 1, getAvgLvl() + Math.floor(Math.random() * 3));
+		// console.log([x_pos,y_pos])
+		
 	}
 }
 
@@ -512,6 +515,14 @@ function toAdd(list) {
 		}
 
 	}
+
+	// next_pos = []
+	// next_pos = spawn_enemy(0, 0)
+
+	for(ctr = 0; ctr < 20; ctr++){
+		
+		spawn_enemy()
+	}
 }
 
 function createInit(list) {
@@ -529,10 +540,12 @@ function createInit(list) {
 			// console.log(word[2], ":", word[3])
 			hp.push(word[2])
 			xp.push(word[3])
+			console.log("money: ", money[p_pos])
 			currMoney = money[p_pos]
 		}
 	}
 
+	document.getElementById("info").innerHTML += currMoney;
 	// console.log("money: " + currMoney)
 	collectTeam("php/poke.php")
 }
