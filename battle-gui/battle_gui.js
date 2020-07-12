@@ -317,6 +317,8 @@ function attack(num) {
 
 
 function show_team() {
+	edit_infobox('Lorum ipsum dolores <br> quantito ericum flum bopsin');
+
 	console.log("display pokemon");
 }
 
@@ -346,9 +348,12 @@ function swap_plyr_after_death(id_to_swap, percent_remaining) {
 	swap_hp_bar(percent_remaining,1);
 }
 
+function edit_infobox(info){
+	document.getElementById("info").innerHTML = info;
+}
+
 //anything that needs to be done before battle starts
 function startBattle() {
-
 }
 
 
