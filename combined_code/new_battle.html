@@ -56,13 +56,20 @@
 					background-color:white" id="PLYR_HBAR_Cover"></div>
 
     <!-- The four attack buttons -->
-    <button type="button" id="atk1" onclick="sel()" class="battle"> Select Move </button>
+    <button type="button" id="atk1" onclick="sel();playAudio();" class="battle"> Select Move </button>
 
-    <button type="button" id="atk2" onclick="poke_sel()" class="battle"> Select Pokemon </button>
+    <button type="button" id="atk2" onclick="poke_sel();playAudio();" class="battle"> Select Pokemon </button>
 
-    <button type="button" id="atk3" onclick="attack('3')" class="battle"> Attack 3 </button>
+    <button type="button" id="atk3" onclick="attack('3');playAudio();" class="battle"> Attack 3 </button>
 
-    <button type="button" id="atk4" onclick="attack('4')" class="battle"> Attack 4 </button>
+    <button type="button" id="atk4" onclick="attack('4');playAudio();" class="battle"> Attack 4 </button>
+
+    <script>
+        var audio = new Audio("pokemon-audio/plink.mp3");
+        function playAudio() {
+            audio.play();
+        }
+    </script>
 
     <script>document.getElementById("atk3").style.visibility = "hidden"
         document.getElementById("atk4").style.visibility = "hidden"</script>

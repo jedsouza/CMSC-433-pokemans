@@ -1,0 +1,173 @@
+
+
+
+.sidenav {
+  height: 452px;
+  width: 0;
+  position: fixed;
+  z-index: 100;
+  top: 80px;
+  left: 62px;
+  background-color: #f1f1f1;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+#borderDemo {
+    
+  border: 5px solid #000000;
+  border-radius: 20px 20px 20px 20px;
+  vertical-align: top;
+  margin: 1vw;
+  }
+
+.front1 {
+  /* width: 150px;
+  height: 150px; */
+  display: inline-block;
+}
+
+.desc {
+  /* width: 120px;
+  height: 50px; */
+  font-size: .8em;
+  display: inline-block; 
+  vertical-align: top;
+  text-align: center;
+  /* bottom: 100px; */
+}
+
+.title {
+  font-size: .9em;
+  font-weight: bolder;
+  margin-top: 1vw;
+  text-decoration: underline;
+}
+
+.check_box {
+  margin-top: 2vw;
+  width: 10px;
+  height: 10px;
+}
+
+#frame {
+  top: 0;
+  left: 0;
+  
+  position: fixed;
+}
+
+#poke {
+  top: 3vw;
+  left: 2vw;
+  width: 30vw !important;
+  height: 26.6vw !important;
+  position: relative;
+  overflow-y:auto
+}
+#tutorial-overlay{
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 548px; /* Full width (cover the whole page) */
+  height: 312px; /* Full height (cover the whole page) */
+  padding-top: 200px;
+  padding-bottom: 0;
+  top: 80;
+  left: 62;
+  right: 0;
+  bottom: 0;
+  font-size: 32px;
+  text-align: center;
+  color:black;
+  opacity: 0.6;
+  background-color:white; /* white background with opacity */
+  z-index: 100; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}

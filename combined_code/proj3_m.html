@@ -5,11 +5,11 @@
 	<title>Pokemon Brown</title>
 	<!-- <script type="text/javascript" src="new_battle.js"></script> -->
 	<script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script type="text/javascript" src="proj3_m.js">
+	<script type="text/javascript" src="proj3.js">
 
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="proj3.css" />
+	<link rel="stylesheet" type="text/css" href="proj3_m.css" />
 
 </head>
 <!-- call startup function -->
@@ -48,6 +48,29 @@
 
 	</div>
 	<p id="info" style="position:absolute;top:580px;left:75px;z-index:10002;color:white;">Current Money: </p>
+	<img src="https://cdn1.iconfinder.com/data/icons/user-interface-2-glyph/32/ui_volume_audio_sound-2-512.png" id="music_icon" style="width:30px;height:30px;position:absolute;top:598px;left:510px;z-index:10002;color:white;"></img>
+	<label class="switch" style="position:absolute;top:595px;left:550px;z-index:10002;">
+		
+		<input id="audio" type="checkbox" onchange="togglePlay(this)">
+		
+		<span class="slider round"></span>
+	</label>
+	<script>
+		var audio = new Audio("pokemon-audio/Giorno's Theme (Jay D Remix).mp3");
+		audio.oncanplay = function() {
+    	if (document.getElementById("audio").checked) this.play()
+		}
+
+		function togglePlay(ex) {
+    		if (ex.checked == true) {
+				audio.play();
+				audio.loop = true;
+			}
+			if (ex.checked == false) {
+				audio.pause();
+			}
+		}
+	</script>
 
 </body>
 

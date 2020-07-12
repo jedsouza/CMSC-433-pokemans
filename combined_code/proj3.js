@@ -49,8 +49,8 @@ function layering() {
 ///creates an object with the given characteristics, used for adding things
 //onto the field in the game
 function Field_element(type, group, width, height, src, x, y, id){
-	// console.log("id: ", id)
-	if(spots[`{x},${y}`] != "full") {
+	console.log("id: ", `${x},${y}`)
+	if(spots[`${x},${y}`] != "full") {
 		var newElem = document.createElement(`${type}`);
 		newElem.style = "position:absolute;";
 		newElem.style.width = width;
@@ -104,7 +104,7 @@ function against_element(x, y, id) {
 }
 
 function betterCollisionDetection(x, y){
-	
+	console.log("check! ", spots[`${x},${y}`] )
 	if(spots[`${x},${y}`] == "full"){
 		console.log("Got it! ", x, y)
 		let poke = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
@@ -130,7 +130,7 @@ function saveEnemy(num, xp) {
 		}
 	});
 
-	// location.replace("http://localhost/project3/new_battle.html")
+	location.replace("http://localhost/project3/new_battle.html")
 }
 
 
@@ -211,62 +211,65 @@ function start_move() {
 	}
 }
 
+function move_field_elements(coord, mod) 
+{        
+    if(coord == Y) {
+        for(let i = 0; i < index; i++){
+            let element = document.getElementById(`field${i}`);
+            let y = parseInt(element.dataset.y) + mod;
+            element.dataset.y = y; 
+            if(y<=656)
+                element.style.top = `${y}`;
+        }
+    }
+    else {
+        for(let i = 0; i < index; i++){
+            let element = document.getElementById(`field${i}`);
+            let x = parseInt(element.dataset.x) + mod;
+            element.dataset.x = x; 
+            if(x<=656)
+                element.style.left = `${x}`;
+        }
+    }
+}
+
 //moves the background instead of the character
 function do_move_background(coord, mod, count, offset) {
-	
-
-	//find new offset, 1 in the opposite direction of the characters direction
-	//mod makes it appear to loop around infinitely
-	offset+=mod
-	offset = offset%MOVE_LIMIT;
-	
-	//update the position
-	if(coord == Y) {
-		bg_img_element.style.backgroundPosition = `0px ${offset}px`;
-
-		//move all field objects along with the background
-		for(let i = 0; i < index; i++){
-			let element = document.getElementById(`field${i}`);
-			let y = parseInt(element.dataset.y) + mod;
-			element.dataset.y = y; 
-			if(y<=656)
-				element.style.top = `${y}`;
-		}
-	}
-	else { //(if coord == X)
-		bg_img_element.style.backgroundPosition = `${offset}px 0px`; 
-		for(let i = 0; i < index; i++){
-			let element = document.getElementById(`field${i}`);
-			let x = parseInt(element.dataset.x) + mod;
-			console.log(x);
-			element.dataset.x = x; 
-			if(x<=656)
-				element.style.left = `${x}`;
-		}
-	}	
-	
-	//keep moving it until the limit is reached to ensure alignment
-	if(count < MOVE_LIMIT) {
-		setTimeout(do_move_background.bind(null, coord, mod, count+1, offset),3);
-	}
-	//when limit is reached, indicate end of movement
-	else {
-		for(let i = 0; i < index; i++){
-			let element = document.getElementById(`field${i}`);
-			spots[`${element.dataset.x},${element.dataset.y}`] = "full";
-		}
-		layering();
-		if(keyPressed == -1) {
-			clearInterval(tID_animate);		
-			animating = false;
-			
-			//reset frame to 0, draw the frame so character stops on his feet
-			fr_num = 0;
-			animate();
-		}
-		moving = false;
-	}
-		
+    
+    //find new offset, 1 in the opposite direction of the characters direction
+    //mod makes it appear to loop around infinitely
+    offset+=mod;
+    offset = offset%MOVE_LIMIT;
+    //update the position
+    if(coord == Y) 
+         bg_img_element.style.backgroundPosition = `0px ${offset}px`;
+    
+    else bg_img_element.style.backgroundPosition = `${offset}px 0px`;     
+    
+    move_field_elements(coord, mod);
+    
+    //keep moving it until the limit is reached to ensure alignment
+    if(count < MOVE_LIMIT) {
+        setTimeout(do_move_background.bind(null, coord, mod, count+1, offset),3);
+    }
+    //when limit is reached, indicate end of movement
+    else {
+        move_field_elements(coord, mod);
+        for(let i = 0; i < index; i++){
+            let element = document.getElementById(`field${i}`);
+            spots[`${element.dataset.x},${element.dataset.y}`] = "full";
+        }
+        layering();
+        if(keyPressed == -1) {
+            clearInterval(tID_animate);        
+            animating = false;
+            
+            //reset frame to 0, draw the frame so character stops on his feet
+            fr_num = 0;
+            animate();
+        }
+        moving = false;
+    }        
 }
 
 
@@ -413,10 +416,15 @@ function startUp() {
 	make_guards();
 
 	myTutorial = document.getElementById("tutorial-overlay");
-	myTutorial.innerHTML = "to move use w,a,s,d or the arrow keys";	
+    myTutorial.innerHTML = "Welcome to Team Rocket rookie!";    
 	document.getElementById("tutorial-overlay").style.display = "block";
-	timeOut = setTimeout(function thatFunction(){myTutorial.innerHTML = "press 'y' to view Pokemon"; document.getElementById("tutorial-overlay").style.display = "block";},4000);
-	timeOut = setTimeout(function tutorialFunct(){document.getElementById("tutorial-overlay").style.display = "none";},8000);
+	timeOut = setTimeout(function thatFunction(){myTutorial.innerHTML = "We are an elite organization that performs covert operations which the governemnt is too afraid to pursue "; document.getElementById("tutorial-overlay").style.display = "block";},4000);
+	timeOut = setTimeout(function thatFunction(){myTutorial.innerHTML = "Your mission today is to kill as many of the dangerous pokemon here as you can, for which you will be handsomely rewarded"; document.getElementById("tutorial-overlay").style.display = "block";},8000);
+	timeOut = setTimeout(function thatFunction(){myTutorial.innerHTML = "As long as you don't ask any questions ofcourse"; document.getElementById("tutorial-overlay").style.display = "block";},12000);
+	timeOut = setTimeout(function thatFunction(){myTutorial.innerHTML = "to move use w,a,s,d or the arrow keys"; document.getElementById("tutorial-overlay").style.display = "block";},16000);
+    timeOut = setTimeout(function thatFunction(){myTutorial.innerHTML = "press 'y' to view Pokemon"; document.getElementById("tutorial-overlay").style.display = "block";},20000);
+	timeOut = setTimeout(function tutorialFunct(){document.getElementById("tutorial-overlay").style.display = "none";},24000);
+	
 	//add listeners for required events
 	window.addEventListener('keydown', handle_input);
 	window.addEventListener('keyup', end_input);

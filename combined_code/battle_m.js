@@ -441,6 +441,8 @@ function withdraw_plyr_animation_loop(loops, id) {
 }
 
 function player_death_animation(id){
+    var audio = new Audio("pokemon-audio/Omae wa mou shindeiru NANI! (Meme origin).mp3");
+    audio.play();
     document.getElementById("tomb").style.visibility = "visible"
 	let tomb = document.getElementById("tomb");
 	tomb.style.left = "150px";
@@ -472,6 +474,8 @@ function player_death_animation(id){
 }
 
 function opponent_death_animation(id){
+    var audio = new Audio("pokemon-audio/Mortal Kombat Deception's Fatality Sound Byte.mp3");
+    audio.play();
     document.getElementById("tomb").style.visibility = "visible"
 	let tomb = document.getElementById("tomb");
 	tomb.style.left = "415px";
