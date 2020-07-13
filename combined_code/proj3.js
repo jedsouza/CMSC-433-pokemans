@@ -130,7 +130,7 @@ function saveEnemy(num, xp) {
 		}
 	});
 
-	location.replace("http://localhost/project3/new_battle.html")
+	location.replace("new_battle.html")
 }
 
 
@@ -473,7 +473,7 @@ function spawn_enemy() {
 		test_y = (Math.floor( Math.random() * 7 + 3))
 		console.log(test_x, ":" , test_y)
 		x_pos = test_x * offsetDirections[num1]
-		y_pos = test_x *  offsetDirections[num2]
+		y_pos = test_y * offsetDirections[num2]
 		// console.log(chosenOffset[X] + ":" + chosenOffset[Y])
 		// chosenOffset[0] *= offsetDirections[num1];
 		// chosenOffset[1] *= offsetDirections[num2];
