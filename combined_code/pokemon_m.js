@@ -172,5 +172,5 @@ function initialize() {
       });
 
 
-      location.replace("http://localhost/project3/proj3_m.html")
+      location.replace("proj3_m.html")
 }

@@ -1,20 +1,5 @@
 <?php
-function OpenCon()
- {
- $dbhost = "localhost";
- $dbuser = "root";
- $dbpass = "12345";
- $db = "cmsc433_proj3";
- $conn = new mysqli($dbhost, $dbuser, $dbpass,$db) or die("Connect failed: %s\n". $conn -> error);
- 
- return $conn;
- }
- 
-function CloseCon($conn)
- {
- $conn -> close();
- }
-   
+require_once "conn.php";
 
  $conn = OpenCon();
  $sql = "SELECT * FROM poke_moves";
