@@ -62,7 +62,7 @@ function start(num){
         }
       });
 
-    location.replace("http://localhost/project3/proj3_m.html")
+    location.replace("proj3_m.html")
 }
 
 function deletePlayer(num){

@@ -137,7 +137,7 @@ function gameOver(num){
         setTimeout(push_poke.bind(null),2000)
     }
     else{
-        location.replace("http://localhost/project3/game_over.html") 
+        location.replace("game_over.html") 
     }
 }
 
@@ -882,7 +882,7 @@ function push_poke() {
         }
       });
 
-      location.replace("http://localhost/project3/proj3_m.html") 
+      location.replace("proj3_m.html") 
 }
 
 
